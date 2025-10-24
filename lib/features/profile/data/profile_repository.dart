@@ -390,6 +390,11 @@ class ProfileRepositoryImpl with ExceptionHandler, InfraLogger implements Profil
     String fileName, {
     CancelToken? cancelToken,
   }) {
+    final trimmedUrl = url.trim();
+    if (!isAllowedSubscriptionUrl(trimmedUrl)) {
+      return TaskEither(() async => left(const ProfileInvalidUrlFailure()));
+    }
+
     return TaskEither(
       () async {
         final file = profilePathResolver.file(fileName);
@@ -399,7 +404,7 @@ class ProfileRepositoryImpl with ExceptionHandler, InfraLogger implements Profil
           final configs = await configOptionRepository.getConfigOptions();
 
           final response = await httpClient.download(
-            url.trim(),
+            trimmedUrl,
             tempFile.path,
             cancelToken: cancelToken,
             userAgent: configs.useXrayCoreWhenPossible ? "v2rayNG/1.8.23" : null,

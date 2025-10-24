@@ -8,6 +8,27 @@ import 'package:hiddify/utils/validators.dart';
 
 typedef ProfileLink = ({String url, String name});
 
+const _allowedSubscriptionHost = 'panel.go-bull.pro';
+
+bool _hasAllowedSubscriptionPath(Uri uri) {
+  final segments = uri.pathSegments.map((segment) => segment.toLowerCase()).toList();
+  if (segments.length < 3) return false;
+  return segments[0] == 'api' && segments[1] == 'sub';
+}
+
+bool isAllowedSubscriptionUri(Uri uri) {
+  if (!uri.hasScheme || !uri.hasAuthority) return false;
+  if (uri.scheme.toLowerCase() != 'https') return false;
+  if (uri.host.toLowerCase() != _allowedSubscriptionHost) return false;
+  return _hasAllowedSubscriptionPath(uri);
+}
+
+bool isAllowedSubscriptionUrl(String url) {
+  final uri = Uri.tryParse(url.trim());
+  if (uri == null) return false;
+  return isAllowedSubscriptionUri(uri);
+}
+
 // TODO: test and improve
 abstract class LinkParser {
   static String generateSubShareLink(String url, [String? name]) {
@@ -34,6 +55,7 @@ abstract class LinkParser {
   static ProfileLink? simple(String link) {
     if (!isUrl(link)) return null;
     final uri = Uri.parse(link.trim());
+    if (!isAllowedSubscriptionUri(uri)) return null;
     return (
       url: uri.toString(),
       name: uri.queryParameters['name'] ?? '',
@@ -80,17 +102,25 @@ abstract class LinkParser {
     switch (uri.scheme) {
       case 'clash' || 'clashmeta' when uri.authority == 'install-config':
         if (uri.authority != 'install-config' || !queryParams.containsKey('url')) return null;
-        return (url: queryParams['url']!, name: queryParams['name'] ?? '');
+        final url = queryParams['url']!;
+        if (!isAllowedSubscriptionUrl(url)) return null;
+        return (url: url, name: queryParams['name'] ?? '');
       case 'sing-box':
         if (uri.authority != 'import-remote-profile' || !queryParams.containsKey('url')) return null;
-        return (url: queryParams['url']!, name: queryParams['name'] ?? '');
+        final url = queryParams['url']!;
+        if (!isAllowedSubscriptionUrl(url)) return null;
+        return (url: url, name: queryParams['name'] ?? '');
       case 'hiddify':
         if (uri.authority == "import") {
-          return (url: uri.path.substring(1) + (uri.hasQuery ? "?${uri.query}" : ""), name: uri.fragment);
+          final url = uri.path.substring(1) + (uri.hasQuery ? "?${uri.query}" : "");
+          if (!isAllowedSubscriptionUrl(url)) return null;
+          return (url: url, name: uri.fragment);
         }
         //for backward compatibility
         if ((uri.authority != 'install-config' && uri.authority != 'install-sub') || !queryParams.containsKey('url')) return null;
-        return (url: queryParams['url']!, name: queryParams['name'] ?? '');
+        final url = queryParams['url']!;
+        if (!isAllowedSubscriptionUrl(url)) return null;
+        return (url: url, name: queryParams['name'] ?? '');
       default:
         return null;
     }
