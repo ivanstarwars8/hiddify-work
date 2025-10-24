@@ -275,7 +275,7 @@ class AddProfileModal extends HookConsumerWidget {
     toast?.start();
     // }
     if (region == "cn") {
-      await _profile.add("#profile-title: Hiddify WARP\nwarp://p1@auto#National&&detour=warp://p2@auto#WoW"); //
+      await _profile.add("#profile-title: Go-bull WARP\nwarp://p1@auto#National&&detour=warp://p2@auto#WoW"); //
     } else {
       await _profile.add("https://raw.githubusercontent.com/hiddify/hiddify-next/main/test.configs/warp"); //
     }
