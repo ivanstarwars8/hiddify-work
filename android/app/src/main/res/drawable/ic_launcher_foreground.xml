@@ -3,23 +3,62 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <!-- Go Bull: distinct bull-head foreground for adaptive launcher icon -->
+  <!-- GO BULL: Агрессивная голова быка с рогами -->
   <group
       android:translateX="18"
-      android:translateY="18"
-      android:scaleX="0.67"
-      android:scaleY="0.67">
+      android:translateY="16"
+      android:scaleX="0.9"
+      android:scaleY="0.9">
+    
+    <!-- Левый рог - золотой -->
     <path
-        android:fillColor="#F4D35E"
-        android:pathData="M21,18C24.2,10.3 31.4,5 40,5s15.8,5.3 19,13c6.1,-1.5 11.5,1.1 13.5,6.0-4.1,1.5-7.9,4-10.2,7.5 0.5,1.9 0.8,3.9 0.8,5.9 0,12.2-10.2,22.6-23.1,22.6S16.9,49.7 16.9,37.4c0,-2 0.3,-4 0.8,-5.9C15.4,28 11.6,25.5 7.5,24c2,-4.9 7.4,-7.5 13.5,-6Z"/>
+        android:fillColor="#D4A017"
+        android:pathData="M12,22c0,-8 5,-15 12,-17 3,5 3,12 -2,20 -3,4 -6,6 -10,8 0,-4 0,-7 0,-11z"/>
+    
+    <!-- Правый рог - золотой -->
+    <path
+        android:fillColor="#D4A017"
+        android:pathData="M68,22c0,-8 -5,-15 -12,-17 -3,5 -3,12 2,20 3,4 6,6 10,8 0,-4 0,-7 0,-11z"/>
+    
+    <!-- Голова быка - золотая -->
+    <path
+        android:fillColor="#F0C55E"
+        android:pathData="M40,20c14,0 25,10 25,22s-11,22-25,22-25,-10-25,-22 11,-22 25,-22z"/>
+    
+    <!-- Морда быка -->
     <path
         android:fillColor="#E3B23C"
-        android:pathData="M28.5,21.5c-3.2,0-6.1,1.8-7.4,4.8 4,1.2 7.6,3.6 10.3,7 1.1,-1.7 2.5,-3.2 4.3,-4.3 -1.3,-4.4 -4.2,-7.5 -7.2,-7.5Zm23,0c3.2,0 6.1,1.8 7.4,4.8 -4,1.2 -7.6,3.6 -10.3,7 -1.1,-1.7 -2.5,-3.2 -4.3,-4.3 1.3,-4.4 4.2,-7.5 7.2,-7.5Z"/>
+        android:pathData="M40,38c8,0 14,5 14,11s-6,11-14,11-14,-5-14,-11 6,-11 14,-11z"/>
+    
+    <!-- Ноздри - чёрные -->
     <path
-        android:fillColor="#0B3D2E"
-        android:pathData="M32,40.5c2.1,0 4,1.7 4,4s-1.9,4-4,4-4-1.7-4-4 1.9-4 4-4Zm16,0c2.1,0 4,1.7 4,4s-1.9,4-4,4-4-1.7-4-4 1.9-4 4-4Z"/>
+        android:fillColor="#1A1A1A"
+        android:pathData="M34,48c0,2-2,4-3,4s-3,-2-3,-4 2,-4 3,-4 3,2 3,4z"/>
     <path
-        android:fillColor="#0B3D2E"
-        android:pathData="M40,50.5c3.2,0 5.9,-1.4 7.6,-3.7 -2.1,-0.8 -4.8,-1.3 -7.6,-1.3s-5.5,0.5 -7.6,1.3c1.7,2.3 4.4,3.7 7.6,3.7Z"/>
+        android:fillColor="#1A1A1A"
+        android:pathData="M52,48c0,2-2,4-3,4s-3,-2-3,-4 2,-4 3,-4 3,2 3,4z"/>
+    
+    <!-- Глаза - агрессивные -->
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M28,34c3,0 5,2 5,4s-2,4-5,4-5,-2-5,-4 2,-4 5,-4z"/>
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M52,34c3,0 5,2 5,4s-2,4-5,4-5,-2-5,-4 2,-4 5,-4z"/>
+    
+    <!-- Блики в глазах -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,35c1,0 2,1 2,2s-1,2-2,2-2,-1-2,-2 1,-2 2,-2z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,35c1,0 2,1 2,2s-1,2-2,2-2,-1-2,-2 1,-2 2,-2z"/>
+    
+    <!-- Кольцо в носу -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#DDAA45"
+        android:strokeWidth="2.5"
+        android:pathData="M40,58c3,0 5,2 5,4s-2,4-5,4-5,-2-5,-4 2,-4 5,-4z"/>
   </group>
 </vector>

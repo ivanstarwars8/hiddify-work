@@ -10,9 +10,6 @@ import 'package:hiddify/core/preferences/preferences_provider.dart';
 import 'package:hiddify/core/router/router.dart';
 import 'package:hiddify/features/common/qr_code_scanner_screen.dart';
 import 'package:hiddify/features/config_option/data/config_option_repository.dart';
-import 'package:hiddify/features/config_option/notifier/warp_option_notifier.dart';
-
-import 'package:hiddify/features/config_option/overview/warp_options_widgets.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
 import 'package:hiddify/utils/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -23,7 +20,6 @@ class AddProfileModal extends HookConsumerWidget {
     this.url,
     this.scrollController,
   });
-  static const warpConsentGiven = "warp_consent_given";
   final String? url;
   final ScrollController? scrollController;
 
@@ -141,92 +137,7 @@ class AddProfileModal extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: buttonsPadding,
-                      vertical: 16,
-                    ),
-                    child: Column(
-                      children: [
-                        Semantics(
-                          button: true,
-                          child: SizedBox(
-                            height: 36,
-                            child: Material(
-                              key: const ValueKey("add_warp_button"),
-                              elevation: 8,
-                              color: theme.colorScheme.surface,
-                              surfaceTintColor: theme.colorScheme.surfaceTint,
-                              shadowColor: Colors.transparent,
-                              borderRadius: BorderRadius.circular(8),
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () async {
-                                  await addProfileModal(context, ref);
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.add_rounded,
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      t.profile.add.addWarp,
-                                      style: theme.textTheme.labelLarge?.copyWith(
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (!PlatformUtils.isDesktop) const SizedBox(height: 16), // Spacing between the buttons
-                        if (!PlatformUtils.isDesktop)
-                          Semantics(
-                            button: true,
-                            child: SizedBox(
-                              height: 36,
-                              child: Material(
-                                key: const ValueKey("add_manually_button"),
-                                elevation: 8,
-                                color: theme.colorScheme.surface,
-                                surfaceTintColor: theme.colorScheme.surfaceTint,
-                                shadowColor: Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
-                                clipBehavior: Clip.antiAlias,
-                                child: InkWell(
-                                  onTap: () async {
-                                    context.pop();
-                                    await const NewProfileRoute().push(context);
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_rounded,
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        t.profile.add.manually,
-                                        style: theme.textTheme.labelLarge?.copyWith(
-                                          color: theme.colorScheme.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const Gap(24),
+                  const Gap(8),
                 ],
               ),
               crossFadeState: addProfileState.isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
@@ -238,47 +149,6 @@ class AddProfileModal extends HookConsumerWidget {
     );
   }
 
-  Future<void> addProfileModal(BuildContext context, WidgetRef ref) async {
-    final _prefs = ref.read(sharedPreferencesProvider).requireValue;
-    final _warp = ref.read(warpOptionNotifierProvider.notifier);
-    final _profile = ref.read(addProfileProvider.notifier);
-    final consent = (_prefs.getBool(warpConsentGiven) ?? false);
-    final region = ref.read(ConfigOptions.region.notifier).raw();
-    context.pop();
-
-    final t = ref.read(translationsProvider);
-    final notification = ref.read(inAppNotificationControllerProvider);
-
-    if (!consent) {
-      final agreed = await showDialog<bool>(
-        context: context,
-        builder: (context) => const WarpLicenseAgreementModal(),
-      );
-
-      if (agreed != true) return;
-    }
-    await _prefs.setBool(warpConsentGiven, true);
-    var toast = notification.showInfoToast(t.profile.add.addingWarpMsg, duration: const Duration(milliseconds: 100));
-    toast?.pause();
-    await _warp.generateWarpConfig();
-    toast?.start();
-
-    // final accountId = _prefs.getString("warp2-account-id");
-    // final accessToken = _prefs.getString("warp2-access-token");
-    // final hasWarp2Config = accountId != null && accessToken != null;
-
-    // if (!hasWarp2Config || true) {
-    toast = notification.showInfoToast(t.profile.add.addingWarpMsg, duration: const Duration(milliseconds: 100));
-    toast?.pause();
-    await _warp.generateWarp2Config();
-    toast?.start();
-    // }
-    if (region == "cn") {
-      await _profile.add("#profile-title: Go-bull WARP\nwarp://p1@auto#National&&detour=warp://p2@auto#WoW"); //
-    } else {
-      await _profile.add("https://raw.githubusercontent.com/hiddify/hiddify-next/main/test.configs/warp"); //
-    }
-  }
 }
 
 class _Button extends StatelessWidget {

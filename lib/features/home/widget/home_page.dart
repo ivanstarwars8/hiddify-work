@@ -14,6 +14,7 @@ import 'package:hiddify/features/proxy/active/active_proxy_delay_indicator.dart'
 import 'package:hiddify/features/proxy/active/active_proxy_footer.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
 import 'package:hiddify/gen/assets.gen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hiddify/utils/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -28,48 +29,80 @@ class HomePage extends HookConsumerWidget {
     final activeProfile = ref.watch(activeProfileProvider);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _GoBullHomeHeader(
-            title: Constants.appName,
-            onQuickSettings: () => const QuickSettingsRoute().push(context),
-            onAddProfile: () => const AddProfileRoute().push(context),
-            quickSettingsTooltip: t.config.quickSettings,
-            addProfileTooltip: t.profile.add.buttonText,
-          ),
-          switch (activeProfile) {
-            AsyncData(value: final profile?) => MultiSliver(
-                children: [
-                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
-                  ProfileTile(profile: profile, isMain: true),
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ConnectionButton(),
-                              ActiveProxyDelayIndicator(),
-                            ],
-                          ),
-                        ),
-                        if (MediaQuery.sizeOf(context).width < 840) const ActiveProxyFooter(),
-                      ],
-                    ),
-                  ),
-                ],
+      body: Stack(
+        children: [
+          // Бордовый градиент + “пыльный” слой
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF160808),
+                    Color(0xFF2A0F0F),
+                    Color(0xFF120606),
+                  ],
+                ),
               ),
-            AsyncData() => switch (hasAnyProfile) {
-                AsyncData(value: true) => const EmptyActiveProfileHomeBody(),
-                _ => const EmptyProfilesHomeBody(),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: SvgPicture.asset(
+                'assets/images/noise_overlay.svg',
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.white70.withOpacity(0.08),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+          CustomScrollView(
+            slivers: [
+              _GoBullHomeHeader(
+                title: Constants.appName,
+                onQuickSettings: () => const QuickSettingsRoute().push(context),
+                onAddProfile: () => const AddProfileRoute().push(context),
+                quickSettingsTooltip: t.config.quickSettings,
+                addProfileTooltip: t.profile.add.buttonText,
+              ),
+              switch (activeProfile) {
+                AsyncData(value: final profile?) => MultiSliver(
+                    children: [
+                      const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                      ProfileTile(profile: profile, isMain: true),
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Expanded(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ConnectionButton(),
+                                  ActiveProxyDelayIndicator(),
+                                ],
+                              ),
+                            ),
+                            if (MediaQuery.sizeOf(context).width < 840) const ActiveProxyFooter(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                AsyncData() => switch (hasAnyProfile) {
+                    AsyncData(value: true) => const EmptyActiveProfileHomeBody(),
+                    _ => const EmptyProfilesHomeBody(),
+                  },
+                AsyncError(:final error) => SliverErrorBodyPlaceholder(t.presentShortError(error)),
+                _ => const SliverToBoxAdapter(),
               },
-            AsyncError(:final error) => SliverErrorBodyPlaceholder(t.presentShortError(error)),
-            _ => const SliverToBoxAdapter(),
-          },
+            ],
+          ),
         ],
       ),
     );
@@ -142,7 +175,7 @@ class _GoBullHomeHeader extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                cs.primary.withOpacity(0.14),
+                const Color(0xFF3A1212),
                 cs.surface,
               ],
             ),

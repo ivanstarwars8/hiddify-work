@@ -7,13 +7,11 @@ import 'package:hiddify/core/model/optional_range.dart';
 import 'package:hiddify/core/model/region.dart';
 import 'package:hiddify/core/notification/in_app_notification_controller.dart';
 import 'package:hiddify/core/widget/adaptive_icon.dart';
-import 'package:hiddify/core/widget/tip_card.dart';
 import 'package:hiddify/core/widget/go_bull_section_card.dart';
 import 'package:hiddify/features/common/confirmation_dialogs.dart';
 import 'package:hiddify/features/common/nested_app_bar.dart';
 import 'package:hiddify/features/config_option/data/config_option_repository.dart';
 import 'package:hiddify/features/config_option/notifier/config_option_notifier.dart';
-import 'package:hiddify/features/config_option/overview/warp_options_widgets.dart';
 import 'package:hiddify/features/config_option/widget/preference_tile.dart';
 import 'package:hiddify/features/log/model/log_level.dart';
 import 'package:hiddify/features/settings/widgets/settings_input_dialog.dart';
@@ -22,52 +20,13 @@ import 'package:hiddify/utils/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
 
-enum ConfigOptionSection {
-  warp,
-  fragment;
-
-  static final _warpKey = GlobalKey(debugLabel: "warp-section-key");
-  static final _fragmentKey = GlobalKey(debugLabel: "fragment-section-key");
-
-  GlobalKey get key => switch (this) {
-        ConfigOptionSection.warp => _warpKey,
-        ConfigOptionSection.fragment => _fragmentKey,
-      };
-}
-
 class ConfigOptionsPage extends HookConsumerWidget {
-  ConfigOptionsPage({super.key, String? section}) : section = section != null ? ConfigOptionSection.values.byName(section) : null;
-
-  final ConfigOptionSection? section;
+  ConfigOptionsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
     final scrollController = useScrollController();
-
-    useMemoized(
-      () {
-        if (section != null) {
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) {
-              final box = section!.key.currentContext?.findRenderObject() as RenderBox?;
-              final offset = box?.localToGlobal(Offset.zero);
-              if (offset == null) return;
-              final height = scrollController.offset + offset.dy - MediaQueryData.fromView(View.of(context)).padding.top - kToolbarHeight;
-              scrollController.animateTo(
-                height,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.decelerate,
-              );
-            },
-          );
-        }
-      },
-    );
-
-    String experimental(String txt) {
-      return "$txt (${t.settings.experimental})";
-    }
 
     return Scaffold(
       body: CustomScrollView(
@@ -131,8 +90,6 @@ class ConfigOptionsPage extends HookConsumerWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-                  TipCard(message: t.settings.experimentalMsg),
-
                   GoBullSectionCard(
                     title: t.config.logLevel,
                     icon: Icons.receipt_long_rounded,
@@ -159,12 +116,12 @@ class ConfigOptionsPage extends HookConsumerWidget {
                           onChanged: (val) => ref.watch(ConfigOptions.directDnsAddress.notifier).reset(),
                         ),
                         SwitchListTile(
-                          title: Text(experimental(t.config.blockAds)),
+                          title: Text(t.config.blockAds),
                           value: ref.watch(ConfigOptions.blockAds),
                           onChanged: ref.watch(ConfigOptions.blockAds.notifier).update,
                         ),
                         SwitchListTile(
-                          title: Text(experimental(t.config.bypassLan)),
+                          title: Text(t.config.bypassLan),
                           value: ref.watch(ConfigOptions.bypassLan),
                           onChanged: ref.watch(ConfigOptions.bypassLan.notifier).update,
                         ),
@@ -284,7 +241,7 @@ class ConfigOptionsPage extends HookConsumerWidget {
                           validateInput: isPort,
                         ),
                         SwitchListTile(
-                          title: Text(experimental(t.config.allowConnectionFromLan)),
+                          title: Text(t.config.allowConnectionFromLan),
                           value: ref.watch(ConfigOptions.allowConnectionFromLan),
                           onChanged: ref.read(ConfigOptions.allowConnectionFromLan.notifier).update,
                         ),
@@ -293,10 +250,9 @@ class ConfigOptionsPage extends HookConsumerWidget {
                   ),
 
                   GoBullSectionCard(
-                    title: experimental(t.config.section.tlsTricks),
+                    title: t.config.section.tlsTricks,
                     icon: Icons.shield_moon_rounded,
                     child: Column(
-                      key: ConfigOptionSection._fragmentKey,
                       children: [
                         SwitchListTile(
                           title: Text(t.config.enableTlsFragment),
@@ -339,12 +295,6 @@ class ConfigOptionsPage extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                  ),
-
-                  GoBullSectionCard(
-                    title: experimental(t.config.section.warp),
-                    icon: Icons.public_rounded,
-                    child: WarpOptionsTiles(key: ConfigOptionSection._warpKey),
                   ),
 
                   GoBullSectionCard(
@@ -408,7 +358,7 @@ class ConfigOptionsPage extends HookConsumerWidget {
                   ),
 
                   SwitchListTile(
-                    title: Text(experimental(t.config.useXrayCoreWhenPossible.Label)),
+                    title: Text(t.config.useXrayCoreWhenPossible.Label),
                     subtitle: Text(t.config.useXrayCoreWhenPossible.Description),
                     value: ref.watch(ConfigOptions.useXrayCoreWhenPossible),
                     onChanged: ref.watch(ConfigOptions.useXrayCoreWhenPossible.notifier).update,

@@ -78,6 +78,10 @@
                 <data android:host="install-sub" />
                 <data android:scheme="hiddify" />
                 <data android:host="import" />
+                <data android:scheme="gobull" />
+                <data android:host="install-sub" />
+                <data android:scheme="gobull" />
+                <data android:host="import" />
             </intent-filter>
 
             <intent-filter>

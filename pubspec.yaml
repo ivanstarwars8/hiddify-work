@@ -1,7 +1,7 @@
 name: hiddify
 description: Go-bull fork of Hiddify – cross-platform multi protocol proxy frontend.
 publish_to: "none"
-version: 2.6.0+20600
+version: 2.7.1+20710
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -124,6 +124,7 @@ flutter:
     # - assets/core/geoip.db
     # - assets/core/geosite.db
     - assets/images/logo.svg
+    - assets/images/noise_overlay.svg
     - assets/images/tray_icon.ico
     - assets/images/tray_icon.png
     - assets/images/tray_icon_dark.ico

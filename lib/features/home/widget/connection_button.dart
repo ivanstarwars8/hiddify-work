@@ -9,7 +9,6 @@ import 'package:hiddify/features/config_option/data/config_option_repository.dar
 import 'package:hiddify/features/config_option/notifier/config_option_notifier.dart';
 import 'package:hiddify/features/connection/model/connection_status.dart';
 import 'package:hiddify/features/connection/notifier/connection_notifier.dart';
-import 'package:hiddify/features/connection/widget/experimental_feature_notice.dart';
 import 'package:hiddify/features/profile/notifier/active_profile_notifier.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
 import 'package:hiddify/utils/alerts.dart';
@@ -42,24 +41,11 @@ class ConnectionButton extends HookConsumerWidget {
 
     final buttonTheme = Theme.of(context).extension<ConnectionButtonTheme>()!;
 
-    Future<bool> showExperimentalNotice() async {
-      final hasExperimental = ref.read(ConfigOptions.hasExperimentalFeatures);
-      final canShowNotice = !ref.read(disableExperimentalFeatureNoticeProvider);
-      if (hasExperimental && canShowNotice && context.mounted) {
-        return await const ExperimentalFeatureNoticeDialog().show(context) ?? false;
-      }
-      return true;
-    }
-
     return _ConnectionButton(
       onTap: switch (connectionStatus) {
-        AsyncData(value: Disconnected()) || AsyncError() => () async {
-            if (await showExperimentalNotice()) {
-              return await ref.read(connectionNotifierProvider.notifier).toggleConnection();
-            }
-          },
+        AsyncData(value: Disconnected()) || AsyncError() => () async => ref.read(connectionNotifierProvider.notifier).toggleConnection(),
         AsyncData(value: Connected()) => () async {
-            if (requiresReconnect == true && await showExperimentalNotice()) {
+            if (requiresReconnect == true) {
               return await ref.read(connectionNotifierProvider.notifier).reconnect(await ref.read(activeProfileProvider.future));
             }
             return await ref.read(connectionNotifierProvider.notifier).toggleConnection();
@@ -76,12 +62,13 @@ class ConnectionButton extends HookConsumerWidget {
         AsyncData(value: final status) => status.present(t),
         _ => "",
       },
+      // GO BULL: Бордово-золотая цветовая схема
       buttonColor: switch (connectionStatus) {
-        AsyncData(value: Connected()) when requiresReconnect == true => Colors.teal,
-        AsyncData(value: Connected()) when delay <= 0 || delay >= 65000 => Color.fromARGB(255, 185, 176, 103),
-        AsyncData(value: Connected()) => buttonTheme.connectedColor!,
-        AsyncData(value: _) => buttonTheme.idleColor!,
-        _ => Colors.red,
+        AsyncData(value: Connected()) when requiresReconnect == true => const Color(0xFFDDAA45), // янтарный “reconnect”
+        AsyncData(value: Connected()) when delay <= 0 || delay >= 65000 => const Color(0xFFE3B23C), // тёплый “подключаем”
+        AsyncData(value: Connected()) => const Color(0xFF2FBF71), // зелёный “подключено”
+        AsyncData(value: _) => const Color(0xFF8E1B1B), // бордо “ожидание/откл”
+        _ => const Color(0xFFC62828), // красный “ошибка”
       },
     );
   }
@@ -114,26 +101,38 @@ class _ConnectionButton extends StatelessWidget {
           label: label,
           child: Container(
             clipBehavior: Clip.antiAlias,
+            // GO BULL: Круглая «кнопка-герой»
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(34),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
                 colors: [
-                  buttonColor.withOpacity(0.22),
+                  buttonColor.withOpacity(0.30),
+                  buttonColor.withOpacity(0.10),
                   cs.surfaceContainerLow,
                 ],
+                center: Alignment.topLeft,
+                radius: 1.0,
+              ),
+              border: Border.all(
+                color: buttonColor.withOpacity(0.45),
+                width: 2.4,
               ),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 28,
-                  spreadRadius: 2,
-                  color: buttonColor.withOpacity(0.35),
+                  blurRadius: 36,
+                  spreadRadius: 6,
+                  color: buttonColor.withOpacity(0.45),
+                ),
+                BoxShadow(
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  color: buttonColor.withOpacity(0.28),
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
-            width: 188,
-            height: 136,
+            width: 180,
+            height: 180,
             child: Material(
               key: const ValueKey("home_connection_button"),
               color: cs.surface,
@@ -141,7 +140,7 @@ class _ConnectionButton extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
+                  padding: const EdgeInsets.all(24),
                   child: TweenAnimationBuilder(
                     tween: ColorTween(end: buttonColor),
                     duration: const Duration(milliseconds: 250),
@@ -150,19 +149,20 @@ class _ConnectionButton extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 44,
-                            height: 44,
-                            padding: const EdgeInsets.all(10),
+                            width: 56,
+                            height: 56,
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: (value ?? buttonColor).withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(18),
+                              shape: BoxShape.circle,
+                              color: (value ?? buttonColor).withOpacity(0.14),
                               border: Border.all(
-                                color: (value ?? buttonColor).withOpacity(0.25),
+                                color: (value ?? buttonColor).withOpacity(0.3),
                               ),
                             ),
                             child: Icon(
                               enabled ? Icons.bolt_rounded : Icons.bolt_outlined,
                               color: value ?? buttonColor,
+                              size: 26,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -184,8 +184,8 @@ class _ConnectionButton extends StatelessWidget {
                   ),
                 ),
               ),
-            ).animate(target: enabled ? 0 : 1).blurXY(end: 1),
-          ).animate(target: enabled ? 0 : 1).scaleXY(end: .96, curve: Curves.easeIn),
+            ).animate(target: enabled ? 0 : 1).blurXY(end: 0.8),
+          ).animate(target: enabled ? 0 : 1).scaleXY(end: .97, curve: Curves.easeIn),
         ),
         const Gap(10),
       ],

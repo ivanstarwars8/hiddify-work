@@ -9,9 +9,10 @@ class ConnectionButtonTheme extends ThemeExtension<ConnectionButtonTheme> {
   final Color? idleColor;
   final Color? connectedColor;
 
+  // GO BULL: Бордово-золотая тема
   static const ConnectionButtonTheme light = ConnectionButtonTheme(
-    idleColor: Color(0xFF4a4d8b),
-    connectedColor: Color(0xFF44a334),
+    idleColor: Color(0xFF8E1B1B),      // Бордо для ожидания/откл
+    connectedColor: Color(0xFF2E8B57), // Зелёный для подключено
   );
 
   @override

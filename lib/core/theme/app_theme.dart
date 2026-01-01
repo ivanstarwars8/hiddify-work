@@ -7,17 +7,28 @@ class AppTheme {
   final AppThemeMode mode;
   final String fontFamily;
 
-  // Go Bull: avoid Hiddify-like red seed; use a distinct dark-teal brand seed.
-  static const _seed = Color(0xFF0B3D2E);
+  // GO BULL: Бордово-золотая тема с “пыльным” характером
+  static const _seed = Color(0xFF6D1B1B); // Глубокий бордо (бык)
+  static const _bullGold = Color(0xFFE3B23C); // Тёплый золотой акцент
+  static const _bullAmber = Color(0xFFD4A017); // Янтарный
+  static const _bullSurface = Color(0xFF130808); // Тёмная поверхность
+  static const _bullSurfaceHigh = Color(0xFF1C0D0D);
+  static const _bullSurfaceLow = Color(0xFF0F0606);
 
   TextTheme _textTheme(ThemeData base) {
-    // Более “брендовый” Go Bull вид: плотнее и жирнее, чтобы не выглядеть как Hiddify.
+    // GO BULL: Жирный, мощный шрифт - как бык
     final t = base.textTheme;
     return t.copyWith(
+      displayLarge: t.displayLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -1),
+      displayMedium: t.displayMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -0.5),
+      headlineLarge: t.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+      headlineMedium: t.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
       headlineSmall: t.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-      titleLarge: t.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+      titleLarge: t.titleLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -0.3),
       titleMedium: t.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-      labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+      titleSmall: t.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+      labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.5),
+      labelMedium: t.labelMedium?.copyWith(fontWeight: FontWeight.w700),
     );
   }
 
@@ -42,13 +53,14 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardTheme(
-        color: scheme.surfaceContainerLow,
-        elevation: 0,
-        shadowColor: Colors.transparent,
+        color: _bullSurfaceHigh,
+        elevation: 3,
+        shadowColor: _bullAmber.withOpacity(0.18),
         surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: scheme.outlineVariant.withOpacity(0.35), width: 1),
         ),
       ),
       listTileTheme: ListTileThemeData(
@@ -60,14 +72,14 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 68,
-        backgroundColor: scheme.surface,
+        backgroundColor: _bullSurface,
         indicatorColor: scheme.primaryContainer,
         labelTextStyle: WidgetStatePropertyAll(
           textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: scheme.surface,
+        backgroundColor: _bullSurface,
         indicatorColor: scheme.primaryContainer,
         selectedIconTheme: IconThemeData(color: scheme.onPrimaryContainer),
         selectedLabelTextStyle: textTheme.labelMedium?.copyWith(
@@ -83,15 +95,19 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           ),
+          elevation: const WidgetStatePropertyAll(6),
+          shadowColor: WidgetStatePropertyAll(_bullAmber.withOpacity(0.35)),
+          backgroundColor: WidgetStatePropertyAll(_seed),
+          foregroundColor: const WidgetStatePropertyAll(Colors.white),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(14),
             ),
           ),
           textStyle: WidgetStatePropertyAll(
-            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800),
+            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 0.8),
           ),
         ),
       ),
@@ -130,8 +146,26 @@ class AppTheme {
   }
 
   ThemeData lightTheme(ColorScheme? lightColorScheme) {
-    final scheme = (lightColorScheme ?? ColorScheme.fromSeed(seedColor: _seed)).copyWith(
+    final scheme = (lightColorScheme ??
+            ColorScheme.fromSeed(
+              seedColor: _seed,
+              brightness: Brightness.dark,
+            ))
+        .copyWith(
+      primary: _seed,
+      onPrimary: Colors.white,
+      primaryContainer: const Color(0xFF922626),
+      onPrimaryContainer: Colors.white,
+      secondary: _bullGold,
+      onSecondary: Colors.black,
+      secondaryContainer: const Color(0xFF3B2A14),
+      onSecondaryContainer: Colors.white,
+      surface: _bullSurface,
       surfaceTint: Colors.transparent,
+      surfaceVariant: _bullSurfaceHigh,
+      background: _bullSurfaceLow,
+      outline: Colors.white.withOpacity(0.12),
+      outlineVariant: Colors.white.withOpacity(0.08),
     );
     return _baseTheme(scheme);
   }
@@ -143,7 +177,20 @@ class AppTheme {
               brightness: Brightness.dark,
             ))
         .copyWith(
+      primary: _seed,
+      onPrimary: Colors.white,
+      primaryContainer: const Color(0xFF922626),
+      onPrimaryContainer: Colors.white,
+      secondary: _bullGold,
+      onSecondary: Colors.black,
+      secondaryContainer: const Color(0xFF3B2A14),
+      onSecondaryContainer: Colors.white,
+      surface: _bullSurface,
       surfaceTint: Colors.transparent,
+      surfaceVariant: _bullSurfaceHigh,
+      background: _bullSurfaceLow,
+      outline: Colors.white.withOpacity(0.12),
+      outlineVariant: Colors.white.withOpacity(0.08),
     );
 
     final base = _baseTheme(scheme);

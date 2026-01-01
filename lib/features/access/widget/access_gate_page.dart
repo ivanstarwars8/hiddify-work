@@ -9,6 +9,7 @@ import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
 import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
+import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/alerts.dart';
 import 'package:hiddify/utils/link_parsers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -54,105 +55,152 @@ class AccessGatePage extends HookConsumerWidget {
       await ref.read(addProfileProvider.notifier).add(url);
     }
 
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          "Первый запуск ${Constants.appName}",
-                          style: Theme.of(context).textTheme.titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        const Gap(8),
-                        Text(
-                          "Добавьте подписку Go Bull. Без валидной подписки вход закрыт.\n\nВажно: экран показывается только один раз — после успешного входа он больше не появится, даже если вы потом удалите подписку.",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                        const Gap(16),
-                        TextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          autofillHints: const [AutofillHints.url],
-                          keyboardType: TextInputType.url,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => submit(),
-                          decoration: const InputDecoration(
-                            labelText: "Ссылка подписки",
-                            hintText: "https://panel.go-bull.pro/api/sub/...",
-                            prefixIcon: Icon(Icons.link),
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const Gap(12),
-                        Row(
+        body: Stack(
+          children: [
+            // Фон градиент + шум
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF2B0F0F),
+                    Color(0xFF1A0A0A),
+                    Color(0xFF0D0505),
+                  ],
+                ),
+              ),
+            ),
+            IgnorePointer(
+              child: Assets.images.noiseOverlay.svg(
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.08),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Card(
+                      color: cs.surface.withOpacity(0.92),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        side: BorderSide(color: cs.primary.withOpacity(0.35)),
+                      ),
+                      elevation: 8,
+                      shadowColor: cs.primary.withOpacity(0.25),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: addState.isLoading
-                                    ? null
-                                    : () async {
-                                        final data = await Clipboard.getData(
-                                          Clipboard.kTextPlain,
-                                        );
-                                        final text =
-                                            (data?.text ?? '').trim();
-                                        controller.text = text;
-                                        focusNode.requestFocus();
-                                      },
-                                child: Text(t.profile.add.fromClipboard),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Assets.images.logo.svg(width: 52, height: 52),
+                                const Gap(12),
+                                Text(
+                                  "Go Bull — доступ по подписке",
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Gap(10),
+                            Text(
+                              "Вставьте ссылку подписки Go Bull, чтобы войти. Экран появится только один раз — после успешного входа больше не покажется (даже если удалить подписку).",
+                              style: theme.textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                            const Gap(16),
+                            TextField(
+                              controller: controller,
+                              focusNode: focusNode,
+                              autofillHints: const [AutofillHints.url],
+                              keyboardType: TextInputType.url,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (_) => submit(),
+                              decoration: const InputDecoration(
+                                labelText: "Ссылка подписки",
+                                hintText: "https://panel.go-bull.pro/api/sub/...",
+                                prefixIcon: Icon(Icons.link),
+                                border: OutlineInputBorder(),
                               ),
                             ),
                             const Gap(12),
-                            Expanded(
-                              child: FilledButton(
-                                onPressed: addState.isLoading ? null : submit,
-                                child: addState.isLoading
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const Text("Проверить"),
-                              ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    icon: const Icon(Icons.paste_rounded),
+                                    onPressed: addState.isLoading
+                                        ? null
+                                        : () async {
+                                            final data = await Clipboard.getData(
+                                              Clipboard.kTextPlain,
+                                            );
+                                            final text = (data?.text ?? '').trim();
+                                            controller.text = text;
+                                            focusNode.requestFocus();
+                                          },
+                                    label: Text(t.profile.add.fromClipboard),
+                                  ),
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    icon: addState.isLoading
+                                        ? const SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Icon(Icons.verified_rounded),
+                                    onPressed: addState.isLoading ? null : submit,
+                                    label: const Text("Проверить"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Gap(8),
+                            TextButton.icon(
+                              icon: const Icon(Icons.telegram),
+                              onPressed: () async {
+                                await Clipboard.setData(
+                                  const ClipboardData(
+                                    text: Constants.telegramChannelUrl,
+                                  ),
+                                );
+                                if (!context.mounted) return;
+                                CustomToast.success("Ссылка на TG скопирована.")
+                                    .show(context);
+                              },
+                              label: const Text("TG группа: @go_bull"),
                             ),
                           ],
                         ),
-                        const Gap(8),
-                        TextButton(
-                          onPressed: () async {
-                            await Clipboard.setData(
-                              const ClipboardData(
-                                text: Constants.telegramChannelUrl,
-                              ),
-                            );
-                            if (!context.mounted) return;
-                            CustomToast.success("Ссылка на TG скопирована.")
-                                .show(context);
-                          },
-                          child: const Text("TG группа: @go_bull"),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
