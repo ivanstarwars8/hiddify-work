@@ -60,8 +60,8 @@ abstract class ConfigOptions {
 
   static final remoteDnsAddress = PreferencesNotifier.create<String, String>(
     "remote-dns-address",
-    // Go Bull default: DoH (Yandex) instead of UDP.
-    "https://dns.yandex.net/dns-query",
+    // Go Bull default: UDP DNS (Yandex 77.88.8.8)
+    "udp://77.88.8.8",
     possibleValues: List.of([
       "local",
       // Yandex DNS
@@ -93,8 +93,8 @@ abstract class ConfigOptions {
 
   static final directDnsAddress = PreferencesNotifier.create<String, String>(
     "direct-dns-address",
-    // Go Bull default: DoH (Yandex) instead of UDP.
-    "https://dns.yandex.net/dns-query",
+    // Go Bull default: UDP DNS (Yandex 77.88.8.1)
+    "udp://77.88.8.1",
     possibleValues: List.of([
       "local",
       // Yandex DNS
@@ -114,7 +114,7 @@ abstract class ConfigOptions {
       "4.4.2.2",
       "8.8.8.8",
     ]),
-    defaultValueFunction: (_) => "https://dns.yandex.net/dns-query",
+    defaultValueFunction: (_) => "udp://77.88.8.1",
     validator: (value) => value.isNotBlank,
   );
 
@@ -145,7 +145,7 @@ abstract class ConfigOptions {
 
   static final tunImplementation = PreferencesNotifier.create<TunImplementation, String>(
     "tun-implementation",
-    TunImplementation.gvisor,
+    TunImplementation.mixed,
     mapFrom: TunImplementation.values.byName,
     mapTo: (value) => value.name,
   );
