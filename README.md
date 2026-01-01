@@ -29,7 +29,7 @@ This repository follows the original Hiddify build workflow. Refer to the upstre
 
 ## Platform notes
 - **Windows**: the packaged application name, installer metadata, and mutex identifiers now use the Go-bull branding.
-- **Android**: launcher labels and foreground notifications display the Go-bull name.
+- **Android**: launcher labels and foreground notifications display the Go-bull name. The in-app menu/navigation has been redesigned to better match the Go-bull identity and feel less like the upstream Hiddify UI.
 - **macOS & Web**: manifests and packaging scripts reference Go-bull assets.
 
 ## License
