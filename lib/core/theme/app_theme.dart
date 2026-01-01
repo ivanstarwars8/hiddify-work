@@ -7,7 +7,8 @@ class AppTheme {
   final AppThemeMode mode;
   final String fontFamily;
 
-  static const _seed = Color(0xFFB00020);
+  // Go Bull: avoid Hiddify-like red seed; use a distinct dark-teal brand seed.
+  static const _seed = Color(0xFF0B3D2E);
 
   TextTheme _textTheme(ThemeData base) {
     // Более “брендовый” Go Bull вид: плотнее и жирнее, чтобы не выглядеть как Hiddify.

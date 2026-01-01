@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/model/constants.dart';
+import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
 import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
@@ -30,6 +31,8 @@ class AccessGatePage extends HookConsumerWidget {
         if (!hasAccess) return null;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!context.mounted) return;
+          // Mark first-setup as completed so we never gate again.
+          ref.read(Preferences.firstSetupCompleted.notifier).update(true);
           context.go(const HomeRoute().location);
         });
         return null;
@@ -68,13 +71,13 @@ class AccessGatePage extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          "Доступ к ${Constants.appName}",
+                          "Первый запуск ${Constants.appName}",
                           style: Theme.of(context).textTheme.titleLarge,
                           textAlign: TextAlign.center,
                         ),
                         const Gap(8),
                         Text(
-                          "Вставьте ссылку подписки Go Bull. Без валидной подписки доступ к приложению закрыт.",
+                          "Добавьте подписку Go Bull. Без валидной подписки вход закрыт.\n\nВажно: экран показывается только один раз — после успешного входа он больше не появится, даже если вы потом удалите подписку.",
                           style: Theme.of(context).textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),

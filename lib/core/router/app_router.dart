@@ -42,7 +42,6 @@ GoRouter router(RouterRef ref) {
     debugLogDiagnostics: true,
     routes: [
       if (useMobileRouter) $mobileWrapperRoute else $desktopWrapperRoute,
-      $introRoute,
       GoRoute(
         path: '/access',
         name: 'Access',
@@ -91,12 +90,12 @@ class RouterListenable extends _$RouterListenable
     with AppLogger
     implements Listenable {
   VoidCallback? _routerListener;
-  bool _introCompleted = false;
+  bool _firstSetupCompleted = false;
   bool _hasAccess = false;
 
   @override
   Future<void> build() async {
-    _introCompleted = ref.watch(Preferences.introCompleted);
+    _firstSetupCompleted = ref.watch(Preferences.firstSetupCompleted);
     _hasAccess =
         ref.watch(hasValidGoBullSubscriptionProvider).valueOrNull ?? false;
 
@@ -111,20 +110,16 @@ class RouterListenable extends _$RouterListenable
   String? redirect(BuildContext context, GoRouterState state) {
     // if (this.state.isLoading || this.state.hasError) return null;
 
-    final isIntro = state.uri.path == const IntroRoute().location;
     final isAccess = state.uri.path == '/access';
 
-    if (!_introCompleted) {
-      return const IntroRoute().location;
-    } else if (isIntro) {
-      return const HomeRoute().location;
-    }
-
-    if (!_hasAccess) {
+    // Go Bull requirement:
+    // - On FIRST launch only: block the app until the user adds a valid Go Bull subscription.
+    // - After the first successful access, NEVER block again (even if they delete the subscription later).
+    final shouldGateFirstRun = !_firstSetupCompleted && !_hasAccess;
+    if (shouldGateFirstRun) {
       return isAccess ? null : '/access';
-    } else if (isAccess) {
-      return const HomeRoute().location;
     }
+    if (isAccess) return const HomeRoute().location;
 
     return null;
   }

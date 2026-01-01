@@ -14,10 +14,19 @@ part 'general_preferences.g.dart';
 bool _debugIntroPage = false;
 
 abstract class Preferences {
+  // Legacy: previously used for an intro/onboarding page. We keep the key for
+  // migrations/backward compatibility, but routing no longer depends on it.
   static final introCompleted = PreferencesNotifier.create(
     "intro_completed",
     false,
     overrideValue: _debugIntroPage && kDebugMode ? false : null,
+  );
+
+  /// Go Bull: show "add subscription / access gate" ONLY on first launch.
+  /// Once user gets access, set it to true and NEVER gate again.
+  static final firstSetupCompleted = PreferencesNotifier.create(
+    "first_setup_completed",
+    false,
   );
 
   static final silentStart = PreferencesNotifier.create<bool, bool>(

@@ -14,6 +14,7 @@ class PreferencesMigration with InfraLogger {
     final List<PreferencesMigrationStep> migrationSteps = [
       PreferencesVersion1Migration(sharedPreferences),
       PreferencesVersion2Migration(sharedPreferences),
+      PreferencesVersion3Migration(sharedPreferences),
     ];
 
     if (currentVersion == migrationSteps.length) {
@@ -149,6 +150,21 @@ class PreferencesVersion2Migration extends PreferencesMigrationStep with InfraLo
     if (region == "ru") {
       loggy.debug("forcing region to [other] on mobile (was [ru])");
       await sharedPreferences.setString("region", "other");
+    }
+  }
+}
+
+/// Go Bull: introduce first-time "subscription gate" without locking existing users out.
+/// If user already passed the old intro, consider first-setup completed.
+class PreferencesVersion3Migration extends PreferencesMigrationStep with InfraLogger {
+  PreferencesVersion3Migration(super.sharedPreferences);
+
+  @override
+  Future<void> migrate() async {
+    final introCompleted = sharedPreferences.getBool("intro_completed");
+    if (introCompleted == true) {
+      loggy.debug("setting [first_setup_completed]=true based on [intro_completed]=true");
+      await sharedPreferences.setBool("first_setup_completed", true);
     }
   }
 }
