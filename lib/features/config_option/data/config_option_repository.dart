@@ -60,14 +60,23 @@ abstract class ConfigOptions {
 
   static final remoteDnsAddress = PreferencesNotifier.create<String, String>(
     "remote-dns-address",
-    "udp://1.1.1.1",
+    // Go Bull default: DoH (Yandex) instead of UDP.
+    "https://dns.yandex.net/dns-query",
     possibleValues: List.of([
       "local",
+      // Yandex DNS
+      "https://dns.yandex.net/dns-query",
+      "https://common.dot.dns.yandex.net/dns-query",
+      "udp://77.88.8.8",
+      "udp://77.88.8.1",
+      "tcp://77.88.8.8",
+      "tcp://77.88.8.1",
       "udp://223.5.5.5",
       "udp://1.1.1.1",
       "udp://1.1.1.2",
       "tcp://1.1.1.1",
       "https://1.1.1.1/dns-query",
+      "https://dns.google/dns-query",
       "https://sky.rethinkdns.com/dns-query",
       "4.4.2.2",
       "8.8.8.8",
@@ -84,19 +93,28 @@ abstract class ConfigOptions {
 
   static final directDnsAddress = PreferencesNotifier.create<String, String>(
     "direct-dns-address",
-    "udp://1.1.1.1",
+    // Go Bull default: DoH (Yandex) instead of UDP.
+    "https://dns.yandex.net/dns-query",
     possibleValues: List.of([
       "local",
+      // Yandex DNS
+      "https://dns.yandex.net/dns-query",
+      "https://common.dot.dns.yandex.net/dns-query",
+      "udp://77.88.8.8",
+      "udp://77.88.8.1",
+      "tcp://77.88.8.8",
+      "tcp://77.88.8.1",
       "udp://223.5.5.5",
       "udp://1.1.1.1",
       "udp://1.1.1.2",
       "tcp://1.1.1.1",
       "https://1.1.1.1/dns-query",
+      "https://dns.google/dns-query",
       "https://sky.rethinkdns.com/dns-query",
       "4.4.2.2",
       "8.8.8.8",
     ]),
-    defaultValueFunction: (ref) => ref.read(region) == Region.cn ? "223.5.5.5" : "1.1.1.1",
+    defaultValueFunction: (_) => "https://dns.yandex.net/dns-query",
     validator: (value) => value.isNotBlank,
   );
 
@@ -139,7 +157,8 @@ abstract class ConfigOptions {
 
   static final connectionTestUrl = PreferencesNotifier.create<String, String>(
     "connection-test-url",
-    "http://cp.cloudflare.com",
+    // Go Bull default: Yandex URL for connectivity check.
+    "https://ya.ru",
     possibleValues: List.of([
       "http://connectivitycheck.gstatic.com/generate_204",
       "http://www.gstatic.com/generate_204",
@@ -150,6 +169,8 @@ abstract class ConfigOptions {
       "http://captive.apple.com/hotspot-detect.html",
       "https://1.1.1.1",
       "http://1.1.1.1",
+      "https://ya.ru",
+      "https://yandex.ru",
     ]),
     validator: (value) => value.isNotBlank && isUrl(value),
   );
@@ -181,7 +202,7 @@ abstract class ConfigOptions {
 
   static final enableFakeDns = PreferencesNotifier.create<bool, bool>(
     "enable-fake-dns",
-    false,
+    true,
   );
 
   static final enableDnsRouting = PreferencesNotifier.create<bool, bool>(
@@ -196,19 +217,19 @@ abstract class ConfigOptions {
 
   static final enableTlsFragment = PreferencesNotifier.create<bool, bool>(
     "enable-tls-fragment",
-    false,
+    true,
   );
 
   static final tlsFragmentSize = PreferencesNotifier.create<OptionalRange, String>(
     "tls-fragment-size",
-    const OptionalRange(min: 10, max: 30),
+    const OptionalRange(min: 20, max: 50),
     mapFrom: OptionalRange.parse,
     mapTo: const OptionalRangeJsonConverter().toJson,
   );
 
   static final tlsFragmentSleep = PreferencesNotifier.create<OptionalRange, String>(
     "tls-fragment-sleep",
-    const OptionalRange(min: 2, max: 8),
+    const OptionalRange(min: 5, max: 15),
     mapFrom: OptionalRange.parse,
     mapTo: const OptionalRangeJsonConverter().toJson,
   );
@@ -220,12 +241,12 @@ abstract class ConfigOptions {
 
   static final enableTlsPadding = PreferencesNotifier.create<bool, bool>(
     "enable-tls-padding",
-    false,
+    true,
   );
 
   static final tlsPaddingSize = PreferencesNotifier.create<OptionalRange, String>(
     "tls-padding-size",
-    const OptionalRange(min: 1, max: 1500),
+    const OptionalRange(min: 200, max: 600),
     mapFrom: OptionalRange.parse,
     mapTo: const OptionalRangeJsonConverter().toJson,
   );
