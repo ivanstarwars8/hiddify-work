@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class TipCard extends StatelessWidget {
@@ -17,7 +16,7 @@ class TipCard extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Icon(FluentIcons.lightbulb_24_regular),
+            child: Icon(Icons.lightbulb_outline_rounded),
           ),
           Expanded(
             child: Column(

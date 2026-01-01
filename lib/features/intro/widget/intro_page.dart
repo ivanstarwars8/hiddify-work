@@ -166,7 +166,9 @@ class IntroPage extends HookConsumerWidget with PresLogger {
       case "CN":
         return RegionLocale(Region.cn, AppLocale.zhCn);
       case "RU":
-        return RegionLocale(Region.ru, AppLocale.ru);
+        // Не выставляем RU автоматически по умолчанию: это включает специфичную
+        // маршрутизацию/правила. Язык при этом можно оставить русским.
+        return RegionLocale(Region.other, AppLocale.ru);
       case "AF":
         return RegionLocale(Region.af, AppLocale.fa);
       case "BR":

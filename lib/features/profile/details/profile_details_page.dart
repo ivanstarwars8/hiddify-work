@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:gap/gap.dart';
@@ -128,7 +127,7 @@ class ProfileDetailsPage extends HookConsumerWidget with PresLogger {
                                       context,
                                       title: t.profile.delete.buttonTxt,
                                       message: t.profile.delete.confirmationMsg,
-                                      icon: FluentIcons.delete_24_regular,
+                                      icon: Icons.delete_outline_rounded,
                                     );
                                     if (deleteConfirmed) {
                                       await notifier.delete();
@@ -179,7 +178,7 @@ class ProfileDetailsPage extends HookConsumerWidget with PresLogger {
                                     ) ??
                                     t.general.toggle.disabled,
                               ),
-                              leading: const Icon(FluentIcons.arrow_sync_24_regular),
+                              leading: const Icon(Icons.refresh_rounded),
                               onTap: () async {
                                 final intervalInHours = await SettingsInputDialog(
                                   title: t.profile.detailsForm.updateIntervalDialogTitle,
@@ -217,7 +216,7 @@ class ProfileDetailsPage extends HookConsumerWidget with PresLogger {
                           if (state.isEditing) ...[
                             ListTile(
                               title: Text(t.profile.detailsForm.lastUpdate),
-                              leading: const Icon(FluentIcons.history_24_regular),
+                              leading: const Icon(Icons.history_rounded),
                               subtitle: Text(state.profile.lastUpdate.format()),
                               dense: true,
                             ),
@@ -236,19 +235,19 @@ class ProfileDetailsPage extends HookConsumerWidget with PresLogger {
                                     TextSpan(
                                       children: [
                                         _buildSubProp(
-                                          FluentIcons.arrow_upload_16_regular,
+                                          Icons.upload_rounded,
                                           subInfo.upload.size(),
                                           t.profile.subscription.upload,
                                         ),
                                         const TextSpan(text: "     "),
                                         _buildSubProp(
-                                          FluentIcons.arrow_download_16_regular,
+                                          Icons.download_rounded,
                                           subInfo.download.size(),
                                           t.profile.subscription.download,
                                         ),
                                         const TextSpan(text: "     "),
                                         _buildSubProp(
-                                          FluentIcons.arrow_bidirectional_up_down_16_regular,
+                                          Icons.swap_vert_rounded,
                                           subInfo.total.size(),
                                           t.profile.subscription.total,
                                         ),
@@ -261,7 +260,7 @@ class ProfileDetailsPage extends HookConsumerWidget with PresLogger {
                                     TextSpan(
                                       children: [
                                         _buildSubProp(
-                                          FluentIcons.clock_dismiss_20_regular,
+                                          Icons.event_busy_rounded,
                                           subInfo.expire.format(),
                                           t.profile.subscription.expireDate,
                                         ),

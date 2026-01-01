@@ -1,10 +1,10 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/model/failures.dart';
 import 'package:hiddify/core/notification/in_app_notification_controller.dart';
 import 'package:hiddify/core/router/router.dart';
+import 'package:hiddify/core/widget/go_bull_section_card.dart';
 import 'package:hiddify/features/profile/model/profile_sort_enum.dart';
 import 'package:hiddify/features/profile/notifier/profiles_update_notifier.dart';
 import 'package:hiddify/features/profile/overview/profiles_overview_notifier.dart';
@@ -71,42 +71,49 @@ class ProfilesOverviewModal extends HookConsumerWidget {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  children: [
-                    FilledButton.icon(
-                      onPressed: () {
-                        const AddProfileRoute().push(context);
-                      },
-                      icon: const Icon(FluentIcons.add_24_filled),
-                      label: Text(t.profile.add.shortBtnTxt),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: SafeArea(
+                  top: false,
+                  child: GoBullSectionCard(
+                    title: t.profile.overviewPageTitle,
+                    icon: Icons.inventory_2_rounded,
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: () => const AddProfileRoute().push(context),
+                              icon: const Icon(Icons.add_rounded),
+                              label: Text(t.profile.add.shortBtnTxt),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          IconButton.filledTonal(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return const ProfilesSortModal();
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.sort_rounded),
+                            tooltip: t.general.sort,
+                          ),
+                          const SizedBox(width: 10),
+                          IconButton.filledTonal(
+                            onPressed: () async {
+                              await ref.read(foregroundProfilesUpdateNotifierProvider.notifier).trigger();
+                            },
+                            icon: const Icon(Icons.refresh_rounded),
+                            tooltip: t.profile.update.updateSubscriptions,
+                          ),
+                        ],
+                      ),
                     ),
-                    FilledButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const ProfilesSortModal();
-                          },
-                        );
-                      },
-                      icon: const Icon(FluentIcons.arrow_sort_24_filled),
-                      label: Text(t.general.sort),
-                    ),
-                    FilledButton.icon(
-                      onPressed: () async {
-                        await ref
-                            .read(
-                              foregroundProfilesUpdateNotifierProvider.notifier,
-                            )
-                            .trigger();
-                      },
-                      icon: const Icon(FluentIcons.arrow_sync_24_filled),
-                      label: Text(t.profile.update.updateSubscriptions),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -160,7 +167,7 @@ class ProfilesSortModal extends HookConsumerWidget {
                                 turns: arrowTurn,
                                 duration: const Duration(milliseconds: 100),
                                 child: Icon(
-                                  FluentIcons.arrow_sort_up_24_regular,
+                                  Icons.swap_vert_rounded,
                                   semanticLabel: sort.mode.name,
                                 ),
                               ),

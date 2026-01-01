@@ -1,5 +1,4 @@
 import 'package:dartx/dartx.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -36,7 +35,7 @@ class ActiveProxyFooter extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _InfoProp(
-                        icon: FluentIcons.arrow_routing_20_regular,
+                        icon: Icons.route_rounded,
                         text: proxy.selectedName.isNotNullOrBlank
                             ? proxy.selectedName!
                             : proxy.name,
@@ -60,7 +59,7 @@ class ActiveProxyFooter extends HookConsumerWidget {
                           ),
                         AsyncError(error: final UnknownIp _) => Row(
                             children: [
-                              const Icon(FluentIcons.arrow_sync_20_regular),
+                              const Icon(Icons.refresh_rounded),
                               const Gap(8),
                               UnknownIPText(
                                 text: t.proxies.checkIp,
@@ -74,7 +73,7 @@ class ActiveProxyFooter extends HookConsumerWidget {
                           ),
                         AsyncError() => Row(
                             children: [
-                              const Icon(FluentIcons.error_circle_20_regular),
+                              const Icon(Icons.error_outline_rounded),
                               const Gap(8),
                               UnknownIPText(
                                 text: t.proxies.unknownIp,
@@ -88,7 +87,7 @@ class ActiveProxyFooter extends HookConsumerWidget {
                           ),
                         _ => const Row(
                             children: [
-                              Icon(FluentIcons.question_circle_20_regular),
+                              Icon(Icons.help_outline_rounded),
                               Gap(8),
                               Flexible(
                                 child: ShimmerSkeleton(
@@ -127,13 +126,13 @@ class _StatsColumn extends HookConsumerWidget {
         child: Column(
           children: [
             _InfoProp(
-              icon: FluentIcons.arrow_bidirectional_up_down_20_regular,
+              icon: Icons.swap_vert_rounded,
               text: (stats?.downlinkTotal ?? 0).size(),
               semanticLabel: t.stats.totalTransferred,
             ),
             const Gap(8),
             _InfoProp(
-              icon: FluentIcons.arrow_download_20_regular,
+              icon: Icons.download_rounded,
               text: (stats?.downlink ?? 0).speed(),
               semanticLabel: t.stats.speed,
             ),

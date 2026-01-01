@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class AdaptiveIcon {
@@ -9,15 +8,15 @@ class AdaptiveIcon {
   IconData get more => switch (platform) {
         TargetPlatform.iOS ||
         TargetPlatform.macOS =>
-          FluentIcons.more_horizontal_24_regular,
-        _ => FluentIcons.more_vertical_24_regular,
+          Icons.more_horiz,
+        _ => Icons.more_vert,
       };
 
   IconData get share => switch (platform) {
-        TargetPlatform.android => FluentIcons.share_android_24_regular,
+        TargetPlatform.android => Icons.share_rounded,
         TargetPlatform.iOS ||
         TargetPlatform.macOS =>
-          FluentIcons.share_ios_24_regular,
-        _ => FluentIcons.share_24_regular,
+          Icons.ios_share_rounded,
+        _ => Icons.share,
       };
 }

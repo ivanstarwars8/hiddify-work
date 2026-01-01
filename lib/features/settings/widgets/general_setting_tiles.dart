@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/haptic/haptic_service.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -24,14 +23,14 @@ class GeneralSettingTiles extends HookConsumerWidget {
         const EnableAnalyticsPrefTile(),
         SwitchListTile(
           title: Text(t.settings.general.autoIpCheck),
-          secondary: const Icon(FluentIcons.globe_search_24_regular),
+          secondary: const Icon(Icons.public_rounded),
           value: ref.watch(Preferences.autoCheckIp),
           onChanged: ref.read(Preferences.autoCheckIp.notifier).update,
         ),
         if (Platform.isAndroid) ...[
           SwitchListTile(
             title: Text(t.settings.general.dynamicNotification),
-            secondary: const Icon(FluentIcons.top_speed_24_regular),
+            secondary: const Icon(Icons.speed_rounded),
             value: ref.watch(Preferences.dynamicNotification),
             onChanged: (value) async {
               await ref.read(Preferences.dynamicNotification.notifier).update(value);
@@ -39,7 +38,7 @@ class GeneralSettingTiles extends HookConsumerWidget {
           ),
           SwitchListTile(
             title: Text(t.settings.general.hapticFeedback),
-            secondary: const Icon(FluentIcons.phone_vibrate_24_regular),
+            secondary: const Icon(Icons.vibration_rounded),
             value: ref.watch(hapticServiceProvider),
             onChanged: ref.read(hapticServiceProvider.notifier).updatePreference,
           ),

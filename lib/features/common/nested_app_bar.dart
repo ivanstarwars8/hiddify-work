@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hiddify/bootstrap.dart';
 import 'package:hiddify/core/router/router.dart';
 import 'package:hiddify/features/common/adaptive_root_scaffold.dart';
+import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/utils.dart';
 
 bool showDrawerButton(BuildContext context) {
@@ -21,6 +22,8 @@ class NestedAppBar extends StatelessWidget {
     this.pinned = true,
     this.forceElevated = false,
     this.bottom,
+    this.showGoBullMark = true,
+    this.expandedHeight = 96,
   });
 
   final Widget? title;
@@ -28,6 +31,35 @@ class NestedAppBar extends StatelessWidget {
   final bool pinned;
   final bool forceElevated;
   final PreferredSizeWidget? bottom;
+  final bool showGoBullMark;
+  final double expandedHeight;
+
+  Widget? _decorateTitle(BuildContext context) {
+    if (title == null) return null;
+    if (!showGoBullMark) return title;
+
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          width: 30,
+          height: 30,
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: cs.primaryContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Assets.images.logo.svg(
+            colorFilter: ColorFilter.mode(cs.onPrimaryContainer, BlendMode.srcIn),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Flexible(child: DefaultTextStyle.merge(maxLines: 1, overflow: TextOverflow.ellipsis, child: title!)),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +81,29 @@ class NestedAppBar extends StatelessWidget {
                   },
                 )
               : null),
-      title: title,
+      title: _decorateTitle(context),
       actions: actions,
       pinned: pinned,
       forceElevated: forceElevated,
       bottom: bottom,
+      expandedHeight: expandedHeight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                Theme.of(context).colorScheme.surface,
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

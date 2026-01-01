@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
+import 'package:hiddify/features/access/widget/access_gate_page.dart';
 import 'package:hiddify/features/deep_link/notifier/deep_link_notifier.dart';
+import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -41,6 +43,14 @@ GoRouter router(RouterRef ref) {
     routes: [
       if (useMobileRouter) $mobileWrapperRoute else $desktopWrapperRoute,
       $introRoute,
+      GoRoute(
+        path: '/access',
+        name: 'Access',
+        pageBuilder: (context, state) => const MaterialPage(
+          name: 'Access',
+          child: AccessGatePage(),
+        ),
+      ),
     ],
     refreshListenable: notifier,
     redirect: notifier.redirect,
@@ -82,10 +92,13 @@ class RouterListenable extends _$RouterListenable
     implements Listenable {
   VoidCallback? _routerListener;
   bool _introCompleted = false;
+  bool _hasAccess = false;
 
   @override
   Future<void> build() async {
     _introCompleted = ref.watch(Preferences.introCompleted);
+    _hasAccess =
+        ref.watch(hasValidGoBullSubscriptionProvider).valueOrNull ?? false;
 
     ref.listenSelf((_, __) {
       if (state.isLoading) return;
@@ -99,10 +112,17 @@ class RouterListenable extends _$RouterListenable
     // if (this.state.isLoading || this.state.hasError) return null;
 
     final isIntro = state.uri.path == const IntroRoute().location;
+    final isAccess = state.uri.path == '/access';
 
     if (!_introCompleted) {
       return const IntroRoute().location;
     } else if (isIntro) {
+      return const HomeRoute().location;
+    }
+
+    if (!_hasAccess) {
+      return isAccess ? null : '/access';
+    } else if (isAccess) {
       return const HomeRoute().location;
     }
 

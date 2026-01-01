@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -59,7 +58,7 @@ class ProfileTile extends HookConsumerWidget {
       elevation: effectiveElevation,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: effectiveOutlineColor),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
       ),
       clipBehavior: Clip.antiAlias,
       shadowColor: Colors.transparent,
@@ -132,7 +131,7 @@ class ProfileTile extends HookConsumerWidget {
                                     ),
                                   ),
                                   const Icon(
-                                    FluentIcons.caret_down_16_filled,
+                                    Icons.expand_more_rounded,
                                     size: 16,
                                   ),
                                 ],
@@ -196,7 +195,7 @@ class ProfileActionButton extends HookConsumerWidget {
               }
               ref.read(updateProfileProvider(profile.id).notifier).updateProfile(profile as RemoteProfileEntity);
             },
-            child: const Icon(FluentIcons.arrow_sync_24_filled),
+            child: const Icon(Icons.refresh_rounded),
           ),
         ),
       );
@@ -246,7 +245,7 @@ class ProfileActionsMenu extends HookConsumerWidget {
       if (profile case RemoteProfileEntity())
         AdaptiveMenuItem(
           title: t.profile.update.buttonTxt,
-          icon: FluentIcons.arrow_sync_24_regular,
+          icon: Icons.refresh_rounded,
           onTap: () {
             if (ref.read(updateProfileProvider(profile.id)).isLoading) {
               return;
@@ -298,14 +297,14 @@ class ProfileActionsMenu extends HookConsumerWidget {
         ],
       ),
       AdaptiveMenuItem(
-        icon: FluentIcons.edit_24_regular,
+        icon: Icons.edit_rounded,
         title: t.profile.edit.buttonTxt,
         onTap: () async {
           await ProfileDetailsRoute(profile.id).push(context);
         },
       ),
       AdaptiveMenuItem(
-        icon: FluentIcons.delete_24_regular,
+        icon: Icons.delete_outline_rounded,
         title: t.profile.delete.buttonTxt,
         onTap: () async {
           if (deleteProfileMutation.state.isInProgress) {
@@ -315,7 +314,7 @@ class ProfileActionsMenu extends HookConsumerWidget {
             context,
             title: t.profile.delete.buttonTxt,
             message: t.profile.delete.confirmationMsg,
-            icon: FluentIcons.delete_24_regular,
+            icon: Icons.delete_outline_rounded,
           );
           if (deleteConfirmed) {
             deleteProfileMutation.setFuture(

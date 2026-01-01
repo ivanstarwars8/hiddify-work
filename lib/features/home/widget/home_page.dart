@@ -1,8 +1,8 @@
 import 'package:dartx/dartx.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/app_info/app_info_provider.dart';
 import 'package:hiddify/core/localization/translations.dart';
+import 'package:hiddify/core/model/constants.dart';
 import 'package:hiddify/core/model/failures.dart';
 import 'package:hiddify/core/router/router.dart';
 import 'package:hiddify/features/common/nested_app_bar.dart';
@@ -13,6 +13,7 @@ import 'package:hiddify/features/profile/widget/profile_tile.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_delay_indicator.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_footer.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
+import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -27,72 +28,151 @@ class HomePage extends HookConsumerWidget {
     final activeProfile = ref.watch(activeProfileProvider);
 
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          CustomScrollView(
-            slivers: [
-              NestedAppBar(
-                title: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(text: t.general.appTitle),
-                      const TextSpan(text: " "),
-                      const WidgetSpan(
-                        child: AppVersionLabel(),
-                        alignment: PlaceholderAlignment.middle,
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: () => const QuickSettingsRoute().push(context),
-                    icon: const Icon(FluentIcons.options_24_filled),
-                    tooltip: t.config.quickSettings,
-                  ),
-                  IconButton(
-                    onPressed: () => const AddProfileRoute().push(context),
-                    icon: const Icon(FluentIcons.add_circle_24_filled),
-                    tooltip: t.profile.add.buttonText,
+      body: CustomScrollView(
+        slivers: [
+          _GoBullHomeHeader(
+            title: Constants.appName,
+            onQuickSettings: () => const QuickSettingsRoute().push(context),
+            onAddProfile: () => const AddProfileRoute().push(context),
+            quickSettingsTooltip: t.config.quickSettings,
+            addProfileTooltip: t.profile.add.buttonText,
+          ),
+          switch (activeProfile) {
+            AsyncData(value: final profile?) => MultiSliver(
+                children: [
+                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                  ProfileTile(profile: profile, isMain: true),
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ConnectionButton(),
+                              ActiveProxyDelayIndicator(),
+                            ],
+                          ),
+                        ),
+                        if (MediaQuery.sizeOf(context).width < 840) const ActiveProxyFooter(),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              switch (activeProfile) {
-                AsyncData(value: final profile?) => MultiSliver(
-                    children: [
-                      ProfileTile(profile: profile, isMain: true),
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ConnectionButton(),
-                                  ActiveProxyDelayIndicator(),
-                                ],
-                              ),
-                            ),
-                            if (MediaQuery.sizeOf(context).width < 840) const ActiveProxyFooter(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                AsyncData() => switch (hasAnyProfile) {
-                    AsyncData(value: true) => const EmptyActiveProfileHomeBody(),
-                    _ => const EmptyProfilesHomeBody(),
-                  },
-                AsyncError(:final error) => SliverErrorBodyPlaceholder(t.presentShortError(error)),
-                _ => const SliverToBoxAdapter(),
+            AsyncData() => switch (hasAnyProfile) {
+                AsyncData(value: true) => const EmptyActiveProfileHomeBody(),
+                _ => const EmptyProfilesHomeBody(),
               },
-            ],
-          ),
+            AsyncError(:final error) => SliverErrorBodyPlaceholder(t.presentShortError(error)),
+            _ => const SliverToBoxAdapter(),
+          },
         ],
+      ),
+    );
+  }
+}
+
+class _GoBullHomeHeader extends StatelessWidget {
+  const _GoBullHomeHeader({
+    required this.title,
+    required this.onQuickSettings,
+    required this.onAddProfile,
+    required this.quickSettingsTooltip,
+    required this.addProfileTooltip,
+  });
+
+  final String title;
+  final VoidCallback onQuickSettings;
+  final VoidCallback onAddProfile;
+  final String quickSettingsTooltip;
+  final String addProfileTooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return SliverAppBar(
+      pinned: true,
+      expandedHeight: 132,
+      automaticallyImplyLeading: false,
+      backgroundColor: cs.surface,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        expandedTitleScale: 1.0,
+        titlePadding: const EdgeInsetsDirectional.only(start: 16, bottom: 14, end: 16),
+        title: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Assets.images.logo.svg(
+                colorFilter: ColorFilter.mode(cs.onPrimaryContainer, BlendMode.srcIn),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const AppVersionLabel(),
+          ],
+        ),
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                cs.primary.withOpacity(0.14),
+                cs.surface,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(top: 8, end: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton.filledTonal(
+                      onPressed: onQuickSettings,
+                      tooltip: quickSettingsTooltip,
+                      icon: const Icon(Icons.tune_rounded),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton.filled(
+                      onPressed: onAddProfile,
+                      tooltip: addProfileTooltip,
+                      icon: const Icon(Icons.add_rounded),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

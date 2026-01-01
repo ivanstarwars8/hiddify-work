@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -55,7 +54,7 @@ class QuickSettingsModal extends HookConsumerWidget {
           else
             ListTile(
               title: Text(t.config.setupWarp),
-              trailing: const Icon(FluentIcons.chevron_right_24_regular),
+              trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () => ConfigOptionsRoute(section: ConfigOptionSection.warp.name).go(context),
             ),
           GestureDetector(
@@ -75,7 +74,7 @@ class QuickSettingsModal extends HookConsumerWidget {
           // ),
           ListTile(
             title: Text(t.config.allOptions),
-            trailing: const Icon(FluentIcons.chevron_right_24_regular),
+            trailing: const Icon(Icons.chevron_right_rounded),
             dense: true,
             onTap: () => const ConfigOptionsRoute().go(context),
           ),

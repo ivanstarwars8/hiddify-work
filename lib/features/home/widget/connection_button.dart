@@ -12,7 +12,6 @@ import 'package:hiddify/features/connection/notifier/connection_notifier.dart';
 import 'package:hiddify/features/connection/widget/experimental_feature_notice.dart';
 import 'package:hiddify/features/profile/notifier/active_profile_notifier.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
-import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/alerts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -28,7 +27,6 @@ class ConnectionButton extends HookConsumerWidget {
     final delay = activeProxy.valueOrNull?.urlTestDelay ?? 0;
 
     final requiresReconnect = ref.watch(configOptionNotifierProvider).valueOrNull;
-    final today = DateTime.now();
 
     ref.listen(
       connectionNotifierProvider,
@@ -85,16 +83,6 @@ class ConnectionButton extends HookConsumerWidget {
         AsyncData(value: _) => buttonTheme.idleColor!,
         _ => Colors.red,
       },
-      image: switch (connectionStatus) {
-        AsyncData(value: Connected()) when requiresReconnect == true => Assets.images.disconnectNorouz,
-        AsyncData(value: Connected()) => Assets.images.connectNorouz,
-        AsyncData(value: _) => Assets.images.disconnectNorouz,
-        _ => Assets.images.disconnectNorouz,
-        AsyncData(value: Disconnected()) || AsyncError() => Assets.images.disconnectNorouz,
-        AsyncData(value: Connected()) => Assets.images.connectNorouz,
-        _ => Assets.images.disconnectNorouz,
-      },
-      useImage: today.day >= 19 && today.day <= 23 && today.month == 3,
     );
   }
 }
@@ -105,19 +93,18 @@ class _ConnectionButton extends StatelessWidget {
     required this.enabled,
     required this.label,
     required this.buttonColor,
-    required this.image,
-    required this.useImage,
   });
 
   final VoidCallback onTap;
   final bool enabled;
   final String label;
   final Color buttonColor;
-  final AssetGenImage image;
-  final bool useImage;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -128,52 +115,79 @@ class _ConnectionButton extends StatelessWidget {
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
+              borderRadius: BorderRadius.circular(34),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  buttonColor.withOpacity(0.22),
+                  cs.surfaceContainerLow,
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 16,
-                  color: buttonColor.withOpacity(0.5),
+                  blurRadius: 28,
+                  spreadRadius: 2,
+                  color: buttonColor.withOpacity(0.35),
                 ),
               ],
             ),
-            width: 148,
-            height: 148,
+            width: 188,
+            height: 136,
             child: Material(
               key: const ValueKey("home_connection_button"),
-              shape: const CircleBorder(),
-              color: Colors.white,
+              color: cs.surface,
+              surfaceTintColor: Colors.transparent,
               child: InkWell(
                 onTap: onTap,
                 child: Padding(
-                  padding: const EdgeInsets.all(36),
+                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 18),
                   child: TweenAnimationBuilder(
                     tween: ColorTween(end: buttonColor),
                     duration: const Duration(milliseconds: 250),
                     builder: (context, value, child) {
-                      if (useImage) {
-                        return image.image(filterQuality: FilterQuality.medium);
-                      } else {
-                        return Assets.images.logo.svg(
-                          colorFilter: ColorFilter.mode(
-                            value!,
-                            BlendMode.srcIn,
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: (value ?? buttonColor).withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: (value ?? buttonColor).withOpacity(0.25),
+                              ),
+                            ),
+                            child: Icon(
+                              enabled ? Icons.bolt_rounded : Icons.bolt_outlined,
+                              color: value ?? buttonColor,
+                            ),
                           ),
-                        );
-                      }
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Text(
+                              label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.2,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),
               ),
             ).animate(target: enabled ? 0 : 1).blurXY(end: 1),
-          ).animate(target: enabled ? 0 : 1).scaleXY(end: .88, curve: Curves.easeIn),
+          ).animate(target: enabled ? 0 : 1).scaleXY(end: .96, curve: Curves.easeIn),
         ),
-        const Gap(16),
-        ExcludeSemantics(
-          child: AnimatedText(
-            label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ),
+        const Gap(10),
       ],
     );
   }

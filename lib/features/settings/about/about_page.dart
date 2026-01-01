@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -56,7 +55,7 @@ class AboutPage extends HookConsumerWidget {
                 height: 24,
                 child: CircularProgressIndicator(),
               ),
-            _ => const Icon(FluentIcons.arrow_sync_24_regular),
+            _ => const Icon(Icons.refresh_rounded),
           },
           onTap: () async {
             await ref.read(appUpdateNotifierProvider.notifier).check();
@@ -65,7 +64,7 @@ class AboutPage extends HookConsumerWidget {
       if (PlatformUtils.isDesktop)
         ListTile(
           title: Text(t.settings.general.openWorkingDir),
-          trailing: const Icon(FluentIcons.open_folder_24_regular),
+          trailing: const Icon(Icons.folder_open_rounded),
           onTap: () async {
             final path =
                 ref.watch(appDirectoriesProvider).requireValue.workingDir.uri;
@@ -109,7 +108,7 @@ class AboutPage extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        t.general.appTitle,
+                        Constants.appName,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const Gap(4),
@@ -129,7 +128,7 @@ class AboutPage extends HookConsumerWidget {
                 if (conditionalTiles.isNotEmpty) const Divider(),
                 ListTile(
                   title: Text(t.about.sourceCode),
-                  trailing: const Icon(FluentIcons.open_24_regular),
+                  trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () async {
                     await UriUtils.tryLaunch(
                       Uri.parse(Constants.githubUrl),
@@ -138,7 +137,7 @@ class AboutPage extends HookConsumerWidget {
                 ),
                 ListTile(
                   title: Text(t.about.telegramChannel),
-                  trailing: const Icon(FluentIcons.open_24_regular),
+                  trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () async {
                     await UriUtils.tryLaunch(
                       Uri.parse(Constants.telegramChannelUrl),
@@ -147,7 +146,7 @@ class AboutPage extends HookConsumerWidget {
                 ),
                 ListTile(
                   title: Text(t.about.termsAndConditions),
-                  trailing: const Icon(FluentIcons.open_24_regular),
+                  trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () async {
                     await UriUtils.tryLaunch(
                       Uri.parse(Constants.termsAndConditionsUrl),
@@ -156,7 +155,7 @@ class AboutPage extends HookConsumerWidget {
                 ),
                 ListTile(
                   title: Text(t.about.privacyPolicy),
-                  trailing: const Icon(FluentIcons.open_24_regular),
+                  trailing: const Icon(Icons.open_in_new_rounded),
                   onTap: () async {
                     await UriUtils.tryLaunch(
                       Uri.parse(Constants.privacyPolicyUrl),

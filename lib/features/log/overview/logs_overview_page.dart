@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fpdart/fpdart.dart';
@@ -67,20 +66,20 @@ class LogsOverviewPage extends HookConsumerWidget with PresLogger {
                       if (state.paused)
                         IconButton(
                           onPressed: notifier.resume,
-                          icon: const Icon(FluentIcons.play_20_regular),
+                          icon: const Icon(Icons.play_arrow_rounded),
                           tooltip: t.logs.resumeTooltip,
                           iconSize: 20,
                         )
                       else
                         IconButton(
                           onPressed: notifier.pause,
-                          icon: const Icon(FluentIcons.pause_20_regular),
+                          icon: const Icon(Icons.pause_rounded),
                           tooltip: t.logs.pauseTooltip,
                           iconSize: 20,
                         ),
                       IconButton(
                         onPressed: notifier.clear,
-                        icon: const Icon(FluentIcons.delete_lines_20_regular),
+                        icon: const Icon(Icons.delete_sweep_rounded),
                         tooltip: t.logs.clearTooltip,
                         iconSize: 20,
                       ),
@@ -94,51 +93,52 @@ class LogsOverviewPage extends HookConsumerWidget with PresLogger {
                     ],
                   ),
                   SliverPinnedHeader(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                      ),
+                    child: SafeArea(
+                      top: false,
+                      bottom: false,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: TextFormField(
-                                controller: filterController,
-                                onChanged: notifier.filterMessage,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: t.logs.filterHint,
-                                ),
-                              ),
-                            ),
-                            const Gap(16),
-                            DropdownButton<Option<LogLevel>>(
-                              value: optionOf(state.levelFilter),
-                              onChanged: (v) {
-                                if (v == null) return;
-                                notifier.filterLevel(v.toNullable());
-                              },
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              borderRadius: BorderRadius.circular(4),
-                              items: [
-                                DropdownMenuItem(
-                                  value: none(),
-                                  child: Text(t.logs.allLevelsFilter),
-                                ),
-                                ...LogLevel.choices.map(
-                                  (e) => DropdownMenuItem(
-                                    value: some(e),
-                                    child: Text(e.name),
+                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: filterController,
+                                    onChanged: notifier.filterMessage,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      hintText: t.logs.filterHint,
+                                      prefixIcon: const Icon(Icons.search_rounded),
+                                    ),
                                   ),
+                                ),
+                                const Gap(12),
+                                DropdownButton<Option<LogLevel>>(
+                                  value: optionOf(state.levelFilter),
+                                  onChanged: (v) {
+                                    if (v == null) return;
+                                    notifier.filterLevel(v.toNullable());
+                                  },
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  borderRadius: BorderRadius.circular(14),
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: none(),
+                                      child: Text(t.logs.allLevelsFilter),
+                                    ),
+                                    ...LogLevel.choices.map(
+                                      (e) => DropdownMenuItem(
+                                        value: some(e),
+                                        child: Text(e.name),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),

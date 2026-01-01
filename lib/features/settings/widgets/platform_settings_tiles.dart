@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/features/settings/notifier/platform_settings_notifier.dart';
@@ -19,7 +18,7 @@ class PlatformSettingsTiles extends HookConsumerWidget {
     ListTile buildIgnoreTile(bool enabled) => ListTile(
           title: Text(t.settings.general.ignoreBatteryOptimizations),
           subtitle: Text(t.settings.general.ignoreBatteryOptimizationsMsg),
-          leading: const Icon(FluentIcons.battery_saver_24_regular),
+          leading: const Icon(Icons.battery_saver_rounded),
           enabled: enabled,
           onTap: () async {
             await ref

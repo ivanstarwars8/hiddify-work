@@ -8,6 +8,7 @@ import 'package:hiddify/core/model/region.dart';
 import 'package:hiddify/core/notification/in_app_notification_controller.dart';
 import 'package:hiddify/core/widget/adaptive_icon.dart';
 import 'package:hiddify/core/widget/tip_card.dart';
+import 'package:hiddify/core/widget/go_bull_section_card.dart';
 import 'package:hiddify/features/common/confirmation_dialogs.dart';
 import 'package:hiddify/features/common/nested_app_bar.dart';
 import 'package:hiddify/features/config_option/data/config_option_repository.dart';
@@ -15,7 +16,6 @@ import 'package:hiddify/features/config_option/notifier/config_option_notifier.d
 import 'package:hiddify/features/config_option/overview/warp_options_widgets.dart';
 import 'package:hiddify/features/config_option/widget/preference_tile.dart';
 import 'package:hiddify/features/log/model/log_level.dart';
-import 'package:hiddify/features/settings/widgets/sections_widgets.dart';
 import 'package:hiddify/features/settings/widgets/settings_input_dialog.dart';
 import 'package:hiddify/singbox/model/singbox_config_enum.dart';
 import 'package:hiddify/utils/utils.dart';
@@ -130,80 +130,94 @@ class ConfigOptionsPage extends HookConsumerWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  const SizedBox(height: 10),
                   TipCard(message: t.settings.experimentalMsg),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.logLevel),
-                    preferences: ref.watch(ConfigOptions.logLevel.notifier),
-                    choices: LogLevel.choices,
+
+                  GoBullSectionCard(
                     title: t.config.logLevel,
-                    presentChoice: (value) => value.name.toUpperCase(),
+                    icon: Icons.receipt_long_rounded,
+                    child: ChoicePreferenceWidget(
+                      selected: ref.watch(ConfigOptions.logLevel),
+                      preferences: ref.watch(ConfigOptions.logLevel.notifier),
+                      choices: LogLevel.choices,
+                      title: t.config.logLevel,
+                      presentChoice: (value) => value.name.toUpperCase(),
+                    ),
                   ),
 
-                  const SettingsDivider(),
-                  SettingsSection(t.config.section.route),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.region),
-                    preferences: ref.watch(ConfigOptions.region.notifier),
-                    choices: Region.values,
-                    title: t.settings.general.region,
-                    presentChoice: (value) => value.present(t),
-                    onChanged: (val) => ref.watch(ConfigOptions.directDnsAddress.notifier).reset(),
+                  GoBullSectionCard(
+                    title: t.config.section.route,
+                    icon: Icons.route_rounded,
+                    child: Column(
+                      children: [
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.region),
+                          preferences: ref.watch(ConfigOptions.region.notifier),
+                          choices: Region.values.where((e) => e != Region.ru).toList(),
+                          title: t.settings.general.region,
+                          presentChoice: (value) => value.present(t),
+                          onChanged: (val) => ref.watch(ConfigOptions.directDnsAddress.notifier).reset(),
+                        ),
+                        SwitchListTile(
+                          title: Text(experimental(t.config.blockAds)),
+                          value: ref.watch(ConfigOptions.blockAds),
+                          onChanged: ref.watch(ConfigOptions.blockAds.notifier).update,
+                        ),
+                        SwitchListTile(
+                          title: Text(experimental(t.config.bypassLan)),
+                          value: ref.watch(ConfigOptions.bypassLan),
+                          onChanged: ref.watch(ConfigOptions.bypassLan.notifier).update,
+                        ),
+                        SwitchListTile(
+                          title: Text(t.config.resolveDestination),
+                          value: ref.watch(ConfigOptions.resolveDestination),
+                          onChanged: ref.watch(ConfigOptions.resolveDestination.notifier).update,
+                        ),
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.ipv6Mode),
+                          preferences: ref.watch(ConfigOptions.ipv6Mode.notifier),
+                          choices: IPv6Mode.values,
+                          title: t.config.ipv6Mode,
+                          presentChoice: (value) => value.present(t),
+                        ),
+                      ],
+                    ),
                   ),
-                  SwitchListTile(
-                    title: Text(experimental(t.config.blockAds)),
-                    value: ref.watch(ConfigOptions.blockAds),
-                    onChanged: ref.watch(ConfigOptions.blockAds.notifier).update,
+
+                  GoBullSectionCard(
+                    title: t.config.section.dns,
+                    icon: Icons.dns_rounded,
+                    child: Column(
+                      children: [
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.remoteDnsAddress),
+                          preferences: ref.watch(ConfigOptions.remoteDnsAddress.notifier),
+                          title: t.config.remoteDnsAddress,
+                        ),
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.remoteDnsDomainStrategy),
+                          preferences: ref.watch(ConfigOptions.remoteDnsDomainStrategy.notifier),
+                          choices: DomainStrategy.values,
+                          title: t.config.remoteDnsDomainStrategy,
+                          presentChoice: (value) => value.displayName,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.directDnsAddress),
+                          preferences: ref.watch(ConfigOptions.directDnsAddress.notifier),
+                          title: t.config.directDnsAddress,
+                        ),
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.directDnsDomainStrategy),
+                          preferences: ref.watch(ConfigOptions.directDnsDomainStrategy.notifier),
+                          choices: DomainStrategy.values,
+                          title: t.config.directDnsDomainStrategy,
+                          presentChoice: (value) => value.displayName,
+                        ),
+                        // Go Bull: DNS routing отключён и не доступен в UI.
+                      ],
+                    ),
                   ),
-                  SwitchListTile(
-                    title: Text(experimental(t.config.bypassLan)),
-                    value: ref.watch(ConfigOptions.bypassLan),
-                    onChanged: ref.watch(ConfigOptions.bypassLan.notifier).update,
-                  ),
-                  SwitchListTile(
-                    title: Text(t.config.resolveDestination),
-                    value: ref.watch(ConfigOptions.resolveDestination),
-                    onChanged: ref.watch(ConfigOptions.resolveDestination.notifier).update,
-                  ),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.ipv6Mode),
-                    preferences: ref.watch(ConfigOptions.ipv6Mode.notifier),
-                    choices: IPv6Mode.values,
-                    title: t.config.ipv6Mode,
-                    presentChoice: (value) => value.present(t),
-                  ),
-                  const SettingsDivider(),
-                  SettingsSection(t.config.section.dns),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.remoteDnsAddress),
-                    preferences: ref.watch(ConfigOptions.remoteDnsAddress.notifier),
-                    title: t.config.remoteDnsAddress,
-                  ),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.remoteDnsDomainStrategy),
-                    preferences: ref.watch(ConfigOptions.remoteDnsDomainStrategy.notifier),
-                    choices: DomainStrategy.values,
-                    title: t.config.remoteDnsDomainStrategy,
-                    presentChoice: (value) => value.displayName,
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.directDnsAddress),
-                    preferences: ref.watch(ConfigOptions.directDnsAddress.notifier),
-                    title: t.config.directDnsAddress,
-                  ),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.directDnsDomainStrategy),
-                    preferences: ref.watch(ConfigOptions.directDnsDomainStrategy.notifier),
-                    choices: DomainStrategy.values,
-                    title: t.config.directDnsDomainStrategy,
-                    presentChoice: (value) => value.displayName,
-                  ),
-                  SwitchListTile(
-                    title: Text(t.config.enableDnsRouting),
-                    value: ref.watch(ConfigOptions.enableDnsRouting),
-                    onChanged: ref.watch(ConfigOptions.enableDnsRouting.notifier).update,
-                  ),
-                  // const SettingsDivider(),
-                  // SettingsSection(experimental(t.config.section.mux)),
+                  // mux section was intentionally disabled here
                   // SwitchListTile(
                   //   title: Text(t.config.enableMux),
                   //   value: ref.watch(ConfigOptions.enableMux),
@@ -225,111 +239,145 @@ class ConfigOptionsPage extends HookConsumerWidget {
                   //   inputToValue: int.tryParse,
                   //   digitsOnly: true,
                   // ),
-                  const SettingsDivider(),
-                  SettingsSection(t.config.section.inbound),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.serviceMode),
-                    preferences: ref.watch(ConfigOptions.serviceMode.notifier),
-                    choices: ServiceMode.choices,
-                    title: t.config.serviceMode,
-                    presentChoice: (value) => value.present(t),
-                  ),
-                  SwitchListTile(
-                    title: Text(t.config.strictRoute),
-                    value: ref.watch(ConfigOptions.strictRoute),
-                    onChanged: ref.watch(ConfigOptions.strictRoute.notifier).update,
-                  ),
-                  ChoicePreferenceWidget(
-                    selected: ref.watch(ConfigOptions.tunImplementation),
-                    preferences: ref.watch(ConfigOptions.tunImplementation.notifier),
-                    choices: TunImplementation.values,
-                    title: t.config.tunImplementation,
-                    presentChoice: (value) => value.name,
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.mixedPort),
-                    preferences: ref.watch(ConfigOptions.mixedPort.notifier),
-                    title: t.config.mixedPort,
-                    inputToValue: int.tryParse,
-                    digitsOnly: true,
-                    validateInput: isPort,
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.tproxyPort),
-                    preferences: ref.watch(ConfigOptions.tproxyPort.notifier),
-                    title: t.config.tproxyPort,
-                    inputToValue: int.tryParse,
-                    digitsOnly: true,
-                    validateInput: isPort,
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.localDnsPort),
-                    preferences: ref.watch(ConfigOptions.localDnsPort.notifier),
-                    title: t.config.localDnsPort,
-                    inputToValue: int.tryParse,
-                    digitsOnly: true,
-                    validateInput: isPort,
-                  ),
-                  SwitchListTile(
-                    title: Text(
-                      experimental(t.config.allowConnectionFromLan),
+                  GoBullSectionCard(
+                    title: t.config.section.inbound,
+                    icon: Icons.settings_input_component_rounded,
+                    child: Column(
+                      children: [
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.serviceMode),
+                          preferences: ref.watch(ConfigOptions.serviceMode.notifier),
+                          choices: ServiceMode.choices,
+                          title: t.config.serviceMode,
+                          presentChoice: (value) => value.present(t),
+                        ),
+                        // Go Bull: strict-route (routing) отключён и не доступен в UI.
+                        ChoicePreferenceWidget(
+                          selected: ref.watch(ConfigOptions.tunImplementation),
+                          preferences: ref.watch(ConfigOptions.tunImplementation.notifier),
+                          choices: TunImplementation.values,
+                          title: t.config.tunImplementation,
+                          presentChoice: (value) => value.name,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.mixedPort),
+                          preferences: ref.watch(ConfigOptions.mixedPort.notifier),
+                          title: t.config.mixedPort,
+                          inputToValue: int.tryParse,
+                          digitsOnly: true,
+                          validateInput: isPort,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.tproxyPort),
+                          preferences: ref.watch(ConfigOptions.tproxyPort.notifier),
+                          title: t.config.tproxyPort,
+                          inputToValue: int.tryParse,
+                          digitsOnly: true,
+                          validateInput: isPort,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.localDnsPort),
+                          preferences: ref.watch(ConfigOptions.localDnsPort.notifier),
+                          title: t.config.localDnsPort,
+                          inputToValue: int.tryParse,
+                          digitsOnly: true,
+                          validateInput: isPort,
+                        ),
+                        SwitchListTile(
+                          title: Text(experimental(t.config.allowConnectionFromLan)),
+                          value: ref.watch(ConfigOptions.allowConnectionFromLan),
+                          onChanged: ref.read(ConfigOptions.allowConnectionFromLan.notifier).update,
+                        ),
+                      ],
                     ),
-                    value: ref.watch(ConfigOptions.allowConnectionFromLan),
-                    onChanged: ref.read(ConfigOptions.allowConnectionFromLan.notifier).update,
                   ),
-                  const SettingsDivider(),
-                  SettingsSection(
-                    experimental(t.config.section.tlsTricks),
-                    key: ConfigOptionSection._fragmentKey,
+
+                  GoBullSectionCard(
+                    title: experimental(t.config.section.tlsTricks),
+                    icon: Icons.shield_moon_rounded,
+                    child: Column(
+                      key: ConfigOptionSection._fragmentKey,
+                      children: [
+                        SwitchListTile(
+                          title: Text(t.config.enableTlsFragment),
+                          value: ref.watch(ConfigOptions.enableTlsFragment),
+                          onChanged: ref.watch(ConfigOptions.enableTlsFragment.notifier).update,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.tlsFragmentSize),
+                          preferences: ref.watch(ConfigOptions.tlsFragmentSize.notifier),
+                          title: t.config.tlsFragmentSize,
+                          inputToValue: OptionalRange.tryParse,
+                          presentValue: (value) => value.present(t),
+                          formatInputValue: (value) => value.format(),
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.tlsFragmentSleep),
+                          preferences: ref.watch(ConfigOptions.tlsFragmentSleep.notifier),
+                          title: t.config.tlsFragmentSleep,
+                          inputToValue: OptionalRange.tryParse,
+                          presentValue: (value) => value.present(t),
+                          formatInputValue: (value) => value.format(),
+                        ),
+                        SwitchListTile(
+                          title: Text(t.config.enableTlsMixedSniCase),
+                          value: ref.watch(ConfigOptions.enableTlsMixedSniCase),
+                          onChanged: ref.watch(ConfigOptions.enableTlsMixedSniCase.notifier).update,
+                        ),
+                        SwitchListTile(
+                          title: Text(t.config.enableTlsPadding),
+                          value: ref.watch(ConfigOptions.enableTlsPadding),
+                          onChanged: ref.watch(ConfigOptions.enableTlsPadding.notifier).update,
+                        ),
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.tlsPaddingSize),
+                          preferences: ref.watch(ConfigOptions.tlsPaddingSize.notifier),
+                          title: t.config.tlsPaddingSize,
+                          inputToValue: OptionalRange.tryParse,
+                          presentValue: (value) => value.format(),
+                          formatInputValue: (value) => value.format(),
+                        ),
+                      ],
+                    ),
                   ),
-                  SwitchListTile(
-                    title: Text(t.config.enableTlsFragment),
-                    value: ref.watch(ConfigOptions.enableTlsFragment),
-                    onChanged: ref.watch(ConfigOptions.enableTlsFragment.notifier).update,
+
+                  GoBullSectionCard(
+                    title: experimental(t.config.section.warp),
+                    icon: Icons.public_rounded,
+                    child: WarpOptionsTiles(key: ConfigOptionSection._warpKey),
                   ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.tlsFragmentSize),
-                    preferences: ref.watch(ConfigOptions.tlsFragmentSize.notifier),
-                    title: t.config.tlsFragmentSize,
-                    inputToValue: OptionalRange.tryParse,
-                    presentValue: (value) => value.present(t),
-                    formatInputValue: (value) => value.format(),
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.tlsFragmentSleep),
-                    preferences: ref.watch(ConfigOptions.tlsFragmentSleep.notifier),
-                    title: t.config.tlsFragmentSleep,
-                    inputToValue: OptionalRange.tryParse,
-                    presentValue: (value) => value.present(t),
-                    formatInputValue: (value) => value.format(),
-                  ),
-                  SwitchListTile(
-                    title: Text(t.config.enableTlsMixedSniCase),
-                    value: ref.watch(ConfigOptions.enableTlsMixedSniCase),
-                    onChanged: ref.watch(ConfigOptions.enableTlsMixedSniCase.notifier).update,
-                  ),
-                  SwitchListTile(
-                    title: Text(t.config.enableTlsPadding),
-                    value: ref.watch(ConfigOptions.enableTlsPadding),
-                    onChanged: ref.watch(ConfigOptions.enableTlsPadding.notifier).update,
-                  ),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.tlsPaddingSize),
-                    preferences: ref.watch(ConfigOptions.tlsPaddingSize.notifier),
-                    title: t.config.tlsPaddingSize,
-                    inputToValue: OptionalRange.tryParse,
-                    presentValue: (value) => value.format(),
-                    formatInputValue: (value) => value.format(),
-                  ),
-                  const SettingsDivider(),
-                  SettingsSection(experimental(t.config.section.warp)),
-                  WarpOptionsTiles(key: ConfigOptionSection._warpKey),
-                  const SettingsDivider(),
-                  SettingsSection(t.config.section.misc),
-                  ValuePreferenceWidget(
-                    value: ref.watch(ConfigOptions.connectionTestUrl),
-                    preferences: ref.watch(ConfigOptions.connectionTestUrl.notifier),
-                    title: t.config.connectionTestUrl,
+
+                  GoBullSectionCard(
+                    title: t.config.section.misc,
+                    icon: Icons.tune_rounded,
+                    child: Column(
+                      children: [
+                        ValuePreferenceWidget(
+                          value: ref.watch(ConfigOptions.connectionTestUrl),
+                          preferences: ref.watch(ConfigOptions.connectionTestUrl.notifier),
+                          title: t.config.connectionTestUrl,
+                        ),
+                        ListTile(
+                          title: Text(t.config.urlTestInterval),
+                          subtitle: Text(
+                            ref.watch(ConfigOptions.urlTestInterval).toApproximateTime(isRelativeToNow: false),
+                          ),
+                          onTap: () async {
+                            final urlTestInterval = await SettingsSliderDialog(
+                              title: t.config.urlTestInterval,
+                              initialValue: ref.watch(ConfigOptions.urlTestInterval).inMinutes.coerceIn(0, 60).toDouble(),
+                              onReset: ref.read(ConfigOptions.urlTestInterval.notifier).reset,
+                              min: 1,
+                              max: 60,
+                              divisions: 60,
+                              labelGen: (value) => Duration(minutes: value.toInt()).toApproximateTime(isRelativeToNow: false),
+                            ).show(context);
+                            if (urlTestInterval == null) return;
+                            await ref.read(ConfigOptions.urlTestInterval.notifier).update(Duration(minutes: urlTestInterval.toInt()));
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   ListTile(
                     title: Text(t.config.urlTestInterval),

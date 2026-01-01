@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/analytics/analytics_controller.dart';
 import 'package:hiddify/core/localization/locale_extensions.dart';
@@ -24,7 +23,7 @@ class LocalePrefTile extends ConsumerWidget {
     return ListTile(
       title: Text(t.settings.general.locale),
       subtitle: Text(locale.localeName),
-      leading: const Icon(FluentIcons.local_language_24_regular),
+      leading: const Icon(Icons.translate_rounded),
       onTap: () async {
         final selectedLocale = await showDialog<AppLocale>(
           context: context,
@@ -60,18 +59,19 @@ class RegionPrefTile extends ConsumerWidget {
     final t = ref.watch(translationsProvider);
 
     final region = ref.watch(ConfigOptions.region);
+    final regions = Region.values.where((e) => e != Region.ru).toList();
 
     return ListTile(
       title: Text(t.settings.general.region),
       subtitle: Text(region.present(t)),
-      leading: const Icon(FluentIcons.globe_location_24_regular),
+      leading: const Icon(Icons.public_rounded),
       onTap: () async {
         final selectedRegion = await showDialog<Region>(
           context: context,
           builder: (context) {
             return SimpleDialog(
               title: Text(t.settings.general.region),
-              children: Region.values
+              children: regions
                   .map(
                     (e) => RadioListTile(
                       title: Text(e.present(t)),
@@ -124,7 +124,7 @@ class EnableAnalyticsPrefTile extends ConsumerWidget {
         t.settings.general.enableAnalyticsMsg,
         style: Theme.of(context).textTheme.bodySmall,
       ),
-      secondary: const Icon(FluentIcons.bug_24_regular),
+      secondary: const Icon(Icons.bug_report_rounded),
       value: enabled,
       onChanged: (value) async {
         if (onChanged != null) {
@@ -152,7 +152,7 @@ class ThemeModePrefTile extends ConsumerWidget {
     return ListTile(
       title: Text(t.settings.general.themeMode),
       subtitle: Text(themeMode.present(t)),
-      leading: const Icon(FluentIcons.weather_moon_20_regular),
+      leading: const Icon(Icons.dark_mode_rounded),
       onTap: () async {
         final selectedThemeMode = await showDialog<AppThemeMode>(
           context: context,
@@ -192,7 +192,7 @@ class ClosingPrefTile extends ConsumerWidget {
     return ListTile(
       title: Text(t.settings.general.actionAtClosing),
       subtitle: Text(action.present(t)),
-      leading: const Icon(FluentIcons.arrow_exit_20_regular),
+      leading: const Icon(Icons.logout_rounded),
       onTap: () async {
         final selectedAction = await showDialog<ActionsAtClosing>(
           context: context,

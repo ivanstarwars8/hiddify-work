@@ -11,8 +11,9 @@ class PreferencesMigration with InfraLogger {
   Future<void> migrate() async {
     final currentVersion = sharedPreferences.getInt(versionKey) ?? 0;
 
-    final migrationSteps = [
+    final List<PreferencesMigrationStep> migrationSteps = [
       PreferencesVersion1Migration(sharedPreferences),
+      PreferencesVersion2Migration(sharedPreferences),
     ];
 
     if (currentVersion == migrationSteps.length) {
@@ -54,7 +55,7 @@ class PreferencesVersion1Migration extends PreferencesMigrationStep
         "proxy" || "system-proxy" || "vpn" => serviceMode,
         "systemProxy" => "system-proxy",
         "tun" => "vpn",
-        _ => PlatformUtils.isDesktop ? "system-proxy" : "vpn",
+        _ => PlatformUtils.isDesktop ? "system-proxy" : "proxy",
       };
       loggy.debug(
         "changing service-mode from [$serviceMode] to [$newMode]",
@@ -132,4 +133,22 @@ class PreferencesVersion1Migration extends PreferencesMigrationStep
         "ipv6Only" => "ipv6_only",
         _ => "",
       };
+}
+
+/// Go Bull: полностью отключаем VPN/TUN routing на мобильных, даже если он был включен ранее.
+class PreferencesVersion2Migration extends PreferencesMigrationStep with InfraLogger {
+  PreferencesVersion2Migration(super.sharedPreferences);
+
+  @override
+  Future<void> migrate() async {
+    if (PlatformUtils.isDesktop) return;
+
+    // Go Bull: не даём выставлять RU как регион по умолчанию, чтобы .ru не уходили в обход напрямую.
+    // Любые правила/обходы для RU должны быть отключены -> используем "other".
+    final region = sharedPreferences.getString("region");
+    if (region == "ru") {
+      loggy.debug("forcing region to [other] on mobile (was [ru])");
+      await sharedPreferences.setString("region", "other");
+    }
+  }
 }

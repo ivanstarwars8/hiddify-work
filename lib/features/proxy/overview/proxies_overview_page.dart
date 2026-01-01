@@ -1,7 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/model/failures.dart';
+import 'package:hiddify/core/widget/go_bull_section_card.dart';
 import 'package:hiddify/features/common/nested_app_bar.dart';
 import 'package:hiddify/features/proxy/overview/proxies_overview_notifier.dart';
 import 'package:hiddify/features/proxy/widget/proxy_tile.dart';
@@ -24,27 +24,7 @@ class ProxiesOverviewPage extends HookConsumerWidget with PresLogger {
           CustomToast.error(t.presentShortError(error)).show(context),
     );
 
-    final appBar = NestedAppBar(
-      title: Text(t.proxies.pageTitle),
-      actions: [
-        PopupMenuButton<ProxiesSort>(
-          initialValue: sortBy,
-          onSelected: ref.read(proxiesSortNotifierProvider.notifier).update,
-          icon: const Icon(FluentIcons.arrow_sort_24_regular),
-          tooltip: t.proxies.sortTooltip,
-          itemBuilder: (context) {
-            return [
-              ...ProxiesSort.values.map(
-                (e) => PopupMenuItem(
-                  value: e,
-                  child: Text(e.present(t)),
-                ),
-              ),
-            ];
-          },
-        ),
-      ],
-    );
+    final appBar = NestedAppBar(title: Text(t.proxies.pageTitle));
 
     switch (asyncProxies) {
       case AsyncData(value: final groups):
@@ -72,12 +52,53 @@ class ProxiesOverviewPage extends HookConsumerWidget with PresLogger {
           body: CustomScrollView(
             slivers: [
               appBar,
+              SliverToBoxAdapter(
+                child: GoBullSectionCard(
+                  title: t.proxies.pageTitle,
+                  icon: Icons.public_rounded,
+                  trailing: FilledButton.tonalIcon(
+                    onPressed: () async => notifier.urlTest(group.tag),
+                    icon: const Icon(Icons.speed_rounded),
+                    label: Text(t.proxies.delayTestTooltip),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.sort_rounded, size: 18),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonFormField<ProxiesSort>(
+                            value: sortBy,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              labelText: t.proxies.sortTooltip,
+                            ),
+                            items: [
+                              ...ProxiesSort.values.map(
+                                (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e.present(t)),
+                                ),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              if (v == null) return;
+                              ref.read(proxiesSortNotifierProvider.notifier).update(v);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               SliverLayoutBuilder(
                 builder: (context, constraints) {
                   final width = constraints.crossAxisExtent;
                   if (!PlatformUtils.isDesktop && width < 648) {
                     return SliverPadding(
-                      padding: const EdgeInsets.only(bottom: 86),
+                      padding: const EdgeInsets.only(bottom: 16),
                       sliver: SliverList.builder(
                         itemBuilder: (_, index) {
                           final proxy = group.items[index];
@@ -103,7 +124,7 @@ class ProxiesOverviewPage extends HookConsumerWidget with PresLogger {
                   return SliverGrid.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: (width / 268).floor(),
-                      mainAxisExtent: 68,
+                      mainAxisExtent: 94,
                     ),
                     itemBuilder: (context, index) {
                       final proxy = group.items[index];
@@ -128,11 +149,6 @@ class ProxiesOverviewPage extends HookConsumerWidget with PresLogger {
                 },
               ),
             ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async => notifier.urlTest(group.tag),
-            tooltip: t.proxies.delayTestTooltip,
-            child: const Icon(FluentIcons.flash_24_filled),
           ),
         );
 

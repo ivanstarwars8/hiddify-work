@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -41,7 +40,7 @@ class ActiveProxyDelayIndicator extends HookConsumerWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(FluentIcons.wifi_1_24_regular),
+                      const Icon(Icons.network_ping_rounded),
                       const Gap(8),
                       if (delay > 0)
                         Text.rich(

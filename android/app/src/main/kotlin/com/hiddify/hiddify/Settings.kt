@@ -55,6 +55,7 @@ object Settings {
         set(value) = preferences.edit().putString(SettingsKey.ACTIVE_PROFILE_NAME, value).apply()
 
     var serviceMode: String
+        // Go Bull: по умолчанию используем VPN/TUN (proxy-mode у пользователя не работает корректно).
         get() = preferences.getString(SettingsKey.SERVICE_MODE, ServiceMode.VPN)!!
         set(value) = preferences.edit().putString(SettingsKey.SERVICE_MODE, value).apply()
 

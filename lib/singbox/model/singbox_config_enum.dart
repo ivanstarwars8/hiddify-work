@@ -16,6 +16,7 @@ enum ServiceMode {
   final String key;
 
   static ServiceMode get defaultMode =>
+      // Go Bull: на мобильных по умолчанию используем VPN/TUN (proxy режим не работает корректно).
       PlatformUtils.isDesktop ? systemProxy : tun;
 
   /// supported service mode based on platform, use this instead of [values] in UI

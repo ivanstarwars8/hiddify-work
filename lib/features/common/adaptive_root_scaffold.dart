@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -26,27 +25,27 @@ class AdaptiveRootScaffold extends HookConsumerWidget {
 
     final destinations = [
       NavigationDestination(
-        icon: const Icon(FluentIcons.power_20_filled),
+        icon: const Icon(Icons.bolt_rounded),
         label: t.home.pageTitle,
       ),
       NavigationDestination(
-        icon: const Icon(FluentIcons.filter_20_filled),
+        icon: const Icon(Icons.public_rounded),
         label: t.proxies.pageTitle,
       ),
       NavigationDestination(
-        icon: const Icon(FluentIcons.box_edit_20_filled),
+        icon: const Icon(Icons.tune_rounded),
         label: t.config.pageTitle,
       ),
       NavigationDestination(
-        icon: const Icon(FluentIcons.settings_20_filled),
+        icon: const Icon(Icons.settings_rounded),
         label: t.settings.pageTitle,
       ),
       NavigationDestination(
-        icon: const Icon(FluentIcons.document_text_20_filled),
+        icon: const Icon(Icons.receipt_long_rounded),
         label: t.logs.pageTitle,
       ),
       NavigationDestination(
-        icon: const Icon(FluentIcons.info_20_filled),
+        icon: const Icon(Icons.info_rounded),
         label: t.about.pageTitle,
       ),
     ];

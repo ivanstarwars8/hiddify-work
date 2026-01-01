@@ -1,5 +1,4 @@
 import 'package:combine/combine.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -105,7 +104,7 @@ class AddProfileModal extends HookConsumerWidget {
                         _Button(
                           key: const ValueKey("add_from_clipboard_button"),
                           label: t.profile.add.fromClipboard,
-                          icon: FluentIcons.clipboard_paste_24_regular,
+                          icon: Icons.content_paste_rounded,
                           size: buttonWidth,
                           onTap: () async {
                             final captureResult = await Clipboard.getData(Clipboard.kTextPlain).then((value) => value?.text ?? '');
@@ -118,7 +117,7 @@ class AddProfileModal extends HookConsumerWidget {
                           _Button(
                             key: const ValueKey("add_by_qr_code_button"),
                             label: t.profile.add.scanQr,
-                            icon: FluentIcons.qr_code_24_regular,
+                            icon: Icons.qr_code_scanner_rounded,
                             size: buttonWidth,
                             onTap: () async {
                               final cr = await QRCodeScannerScreen().open(context);
@@ -132,7 +131,7 @@ class AddProfileModal extends HookConsumerWidget {
                           _Button(
                             key: const ValueKey("add_manually_button"),
                             label: t.profile.add.manually,
-                            icon: FluentIcons.add_24_regular,
+                            icon: Icons.add_rounded,
                             size: buttonWidth,
                             onTap: () async {
                               context.pop();
@@ -169,7 +168,7 @@ class AddProfileModal extends HookConsumerWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      FluentIcons.add_24_regular,
+                                      Icons.add_rounded,
                                       color: theme.colorScheme.primary,
                                     ),
                                     const SizedBox(width: 8),
@@ -208,7 +207,7 @@ class AddProfileModal extends HookConsumerWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        FluentIcons.add_24_regular,
+                                        Icons.add_rounded,
                                         color: theme.colorScheme.primary,
                                       ),
                                       const SizedBox(width: 8),
