@@ -9,7 +9,7 @@ import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
 import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
-import 'package:hiddify/gen/assets.gen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hiddify/utils/alerts.dart';
 import 'package:hiddify/utils/link_parsers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -78,7 +78,8 @@ class AccessGatePage extends HookConsumerWidget {
               ),
             ),
             IgnorePointer(
-              child: Assets.images.noiseOverlay.svg(
+              child: SvgPicture.asset(
+                'assets/images/noise_overlay.svg',
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   Colors.white.withOpacity(0.08),

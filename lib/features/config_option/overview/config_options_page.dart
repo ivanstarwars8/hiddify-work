@@ -21,7 +21,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
 
 class ConfigOptionsPage extends HookConsumerWidget {
-  ConfigOptionsPage({super.key});
+  ConfigOptionsPage({super.key, this.section});
+  final String? section; // kept for router compatibility, not used
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
