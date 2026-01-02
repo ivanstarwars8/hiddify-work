@@ -1,5 +1,5 @@
 name: hiddify
-description: Go-bull fork of Hiddify – cross-platform multi protocol proxy frontend.
+description: Go Bull – standalone cross-platform proxy client (rebranded, not Hiddify UI).
 publish_to: "none"
 version: 2.7.1+20710
 
