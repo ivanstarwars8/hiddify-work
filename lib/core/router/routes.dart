@@ -13,6 +13,7 @@ import 'package:hiddify/features/profile/add/add_profile_modal.dart';
 import 'package:hiddify/features/profile/details/profile_details_page.dart';
 import 'package:hiddify/features/profile/overview/profiles_overview_page.dart';
 import 'package:hiddify/features/proxy/overview/proxies_overview_page.dart';
+import 'package:hiddify/features/menu/menu_page.dart';
 import 'package:hiddify/features/settings/about/about_page.dart';
 import 'package:hiddify/features/settings/overview/settings_overview_page.dart';
 import 'package:hiddify/utils/utils.dart';
@@ -70,6 +71,10 @@ GlobalKey<NavigatorState>? _dynamicRootKey = useMobileRouter ? rootNavigatorKey 
           name: AboutRoute.name,
         ),
       ],
+    ),
+    TypedGoRoute<MenuRoute>(
+      path: "/menu",
+      name: MenuRoute.name,
     ),
     TypedGoRoute<ProxiesRoute>(
       path: "/proxies",
@@ -174,13 +179,28 @@ class HomeRoute extends GoRouteData {
   }
 }
 
-class ProxiesRoute extends GoRouteData {
-  const ProxiesRoute();
-  static const name = "Proxies";
+class MenuRoute extends GoRouteData {
+  const MenuRoute();
+  static const name = "Menu";
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return const NoTransitionPage(
+      name: name,
+      child: MenuPage(),
+    );
+  }
+}
+
+class ProxiesRoute extends GoRouteData {
+  const ProxiesRoute();
+  static const name = "Proxies";
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return const MaterialPage(
       name: name,
       child: ProxiesOverviewPage(),
     );

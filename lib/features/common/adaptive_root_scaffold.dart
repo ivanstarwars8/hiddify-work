@@ -28,14 +28,9 @@ class AdaptiveRootScaffold extends HookConsumerWidget {
         icon: const Icon(Icons.bolt_rounded),
         label: t.home.pageTitle,
       ),
-      NavigationDestination(
-        icon: const Icon(Icons.public_rounded),
-        label: t.proxies.pageTitle,
-      ),
-      // Config Options и Settings скрыты
-      NavigationDestination(
-        icon: const Icon(Icons.info_rounded),
-        label: t.about.pageTitle,
+      const NavigationDestination(
+        icon: Icon(Icons.menu_rounded),
+        label: "Меню",
       ),
     ];
 
@@ -47,7 +42,7 @@ class AdaptiveRootScaffold extends HookConsumerWidget {
       },
       destinations: destinations,
       drawerDestinationRange: (0, null),
-      bottomDestinationRange: (0, 3),
+      bottomDestinationRange: (0, 2),
       useBottomSheet: useMobileRouter,
       sidebarTrailing: const Expanded(
         child: Align(

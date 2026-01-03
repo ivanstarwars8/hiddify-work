@@ -83,7 +83,7 @@ class AccessGatePage extends HookConsumerWidget {
                 'assets/images/noise_overlay.svg',
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.25),
                   BlendMode.srcIn,
                 ),
               ),
