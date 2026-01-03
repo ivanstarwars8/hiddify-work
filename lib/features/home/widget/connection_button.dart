@@ -101,93 +101,54 @@ class _ConnectionButton extends StatelessWidget {
           label: label,
           child: Container(
             clipBehavior: Clip.antiAlias,
-            // GO BULL: Круглая «кнопка-герой»
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  buttonColor.withOpacity(0.30),
-                  buttonColor.withOpacity(0.10),
-                  cs.surfaceContainerLow,
-                ],
-                center: Alignment.topLeft,
-                radius: 1.0,
-              ),
+              color: cs.surface,
               border: Border.all(
-                color: buttonColor.withOpacity(0.45),
-                width: 2.4,
+                color: buttonColor.withOpacity(0.6),
+                width: 3,
               ),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 36,
-                  spreadRadius: 6,
-                  color: buttonColor.withOpacity(0.45),
-                ),
-                BoxShadow(
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  color: buttonColor.withOpacity(0.28),
-                  offset: const Offset(0, 6),
+                  blurRadius: 48,
+                  spreadRadius: 4,
+                  color: buttonColor.withOpacity(0.35),
                 ),
               ],
             ),
-            width: 180,
-            height: 180,
+            width: 140,
+            height: 140,
             child: Material(
               key: const ValueKey("home_connection_button"),
-              color: cs.surface,
-              surfaceTintColor: Colors.transparent,
+              color: Colors.transparent,
               child: InkWell(
                 onTap: onTap,
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: TweenAnimationBuilder(
-                    tween: ColorTween(end: buttonColor),
-                    duration: const Duration(milliseconds: 250),
-                    builder: (context, value, child) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: (value ?? buttonColor).withOpacity(0.14),
-                              border: Border.all(
-                                color: (value ?? buttonColor).withOpacity(0.3),
-                              ),
-                            ),
-                            child: Icon(
-                              enabled ? Icons.bolt_rounded : Icons.bolt_outlined,
-                              color: value ?? buttonColor,
-                              size: 26,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Flexible(
-                            child: Text(
-                              label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.2,
-                                color: cs.onSurface,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                customBorder: const CircleBorder(),
+                child: TweenAnimationBuilder(
+                  tween: ColorTween(end: buttonColor),
+                  duration: const Duration(milliseconds: 250),
+                  builder: (context, value, child) {
+                    return Center(
+                      child: Icon(
+                        Icons.bolt_rounded,
+                        color: value ?? buttonColor,
+                        size: 56,
+                      ),
+                    );
+                  },
                 ),
               ),
             ).animate(target: enabled ? 0 : 1).blurXY(end: 0.8),
           ).animate(target: enabled ? 0 : 1).scaleXY(end: .97, curve: Curves.easeIn),
         ),
-        const Gap(10),
+        const Gap(14),
+        Text(
+          label,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: buttonColor,
+          ),
+        ),
       ],
     );
   }

@@ -31,24 +31,10 @@ class GoBullSectionCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, color: cs.onSurfaceVariant),
-                    const SizedBox(width: 10),
-                  ],
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                  ),
-                  if (trailing != null) trailing!,
-                ],
-              ),
+              if (trailing != null) ...[
+                trailing!,
+                const SizedBox(height: 12),
+              ],
               const SizedBox(height: 10),
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),

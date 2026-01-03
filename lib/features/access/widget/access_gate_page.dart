@@ -108,16 +108,23 @@ class AccessGatePage extends HookConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Column(
                               children: [
                                 Assets.images.logo.svg(width: 52, height: 52),
-                                const Gap(12),
+                                const Gap(10),
                                 Text(
-                                  "Go Bull — доступ по подписке",
-                                  style: theme.textTheme.titleLarge?.copyWith(
+                                  "Go Bull",
+                                  style: theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w900,
                                   ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  "доступ по подписке",
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: cs.onSurfaceVariant,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
