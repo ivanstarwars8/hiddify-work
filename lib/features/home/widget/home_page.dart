@@ -63,9 +63,7 @@ class HomePage extends HookConsumerWidget {
             slivers: [
               _GoBullHomeHeader(
                 title: Constants.appName,
-                onQuickSettings: () => const QuickSettingsRoute().push(context),
                 onAddProfile: () => const AddProfileRoute().push(context),
-                quickSettingsTooltip: t.config.quickSettings,
                 addProfileTooltip: t.profile.add.buttonText,
               ),
               switch (activeProfile) {
@@ -112,16 +110,12 @@ class HomePage extends HookConsumerWidget {
 class _GoBullHomeHeader extends StatelessWidget {
   const _GoBullHomeHeader({
     required this.title,
-    required this.onQuickSettings,
     required this.onAddProfile,
-    required this.quickSettingsTooltip,
     required this.addProfileTooltip,
   });
 
   final String title;
-  final VoidCallback onQuickSettings;
   final VoidCallback onAddProfile;
-  final String quickSettingsTooltip;
   final String addProfileTooltip;
 
   @override
@@ -186,21 +180,10 @@ class _GoBullHomeHeader extends StatelessWidget {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsetsDirectional.only(top: 8, end: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton.filledTonal(
-                      onPressed: onQuickSettings,
-                      tooltip: quickSettingsTooltip,
-                      icon: const Icon(Icons.tune_rounded),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton.filled(
-                      onPressed: onAddProfile,
-                      tooltip: addProfileTooltip,
-                      icon: const Icon(Icons.add_rounded),
-                    ),
-                  ],
+                child: IconButton.filled(
+                  onPressed: onAddProfile,
+                  tooltip: addProfileTooltip,
+                  icon: const Icon(Icons.add_rounded),
                 ),
               ),
             ),
