@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -25,6 +26,7 @@ class IntroPage extends HookConsumerWidget with PresLogger {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
+    final iosParity = defaultTargetPlatform == TargetPlatform.iOS;
 
     final isStarting = useState(false);
 
@@ -34,85 +36,183 @@ class IntroPage extends HookConsumerWidget with PresLogger {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          shrinkWrap: true,
-          slivers: [
-            SliverToBoxAdapter(
-              child: SizedBox(
-                width: 224,
-                height: 224,
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Assets.images.logo.svg(),
-                ),
-              ),
-            ),
-            SliverCrossAxisConstrained(
-              maxCrossAxisExtent: 368,
-              child: MultiSliver(
-                children: [
-                  const LocalePrefTile(),
-                  const SliverGap(4),
-                  const RegionPrefTile(),
-                  const SliverGap(4),
-                  const EnableAnalyticsPrefTile(),
-                  const SliverGap(4),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text.rich(
-                      t.intro.termsAndPolicyCaution(
-                        tap: (text) => TextSpan(
-                          text: text,
-                          style: const TextStyle(color: Colors.blue),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async {
-                              await UriUtils.tryLaunch(
-                                Uri.parse(Constants.termsAndConditionsUrl),
-                              );
-                            },
-                        ),
-                      ),
-                      style: Theme.of(context).textTheme.bodySmall,
+      body: iosParity
+          ? CustomScrollView(
+              shrinkWrap: true,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    width: 224,
+                    height: 224,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Assets.images.logo.svg(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
+                ),
+                SliverCrossAxisConstrained(
+                  maxCrossAxisExtent: 368,
+                  child: MultiSliver(
+                    children: [
+                      const LocalePrefTile(),
+                      const SliverGap(4),
+                      const RegionPrefTile(),
+                      const SliverGap(4),
+                      const EnableAnalyticsPrefTile(),
+                      const SliverGap(4),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text.rich(
+                          t.intro.termsAndPolicyCaution(
+                            tap: (text) => TextSpan(
+                              text: text,
+                              style: const TextStyle(color: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  await UriUtils.tryLaunch(
+                                    Uri.parse(Constants.termsAndConditionsUrl),
+                                  );
+                                },
+                            ),
+                          ),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 24,
+                        ),
+                        child: FilledButton(
+                          onPressed: () async {
+                            if (isStarting.value) return;
+                            isStarting.value = true;
+                            if (!ref
+                                .read(analyticsControllerProvider)
+                                .requireValue) {
+                              loggy.info(
+                                  "disabling analytics per user request");
+                              try {
+                                await ref
+                                    .read(analyticsControllerProvider.notifier)
+                                    .disableAnalytics();
+                              } catch (error, stackTrace) {
+                                loggy.error(
+                                  "could not disable analytics",
+                                  error,
+                                  stackTrace,
+                                );
+                              }
+                            }
+                            await ref
+                                .read(Preferences.introCompleted.notifier)
+                                .update(true);
+                          },
+                          child: isStarting.value
+                              ? LinearProgressIndicator(
+                                  backgroundColor: Colors.transparent,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface,
+                                )
+                              : Text(t.intro.start),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          : SafeArea(
+              child: CustomScrollView(
+                shrinkWrap: true,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      width: 224,
+                      height: 224,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Assets.images.logo.svg(),
+                      ),
                     ),
-                    child: FilledButton(
-                      onPressed: () async {
-                        if (isStarting.value) return;
-                        isStarting.value = true;
-                        if (!ref.read(analyticsControllerProvider).requireValue) {
-                          loggy.info("disabling analytics per user request");
-                          try {
-                            await ref.read(analyticsControllerProvider.notifier).disableAnalytics();
-                          } catch (error, stackTrace) {
-                            loggy.error(
-                              "could not disable analytics",
-                              error,
-                              stackTrace,
-                            );
-                          }
-                        }
-                        await ref.read(Preferences.introCompleted.notifier).update(true);
-                      },
-                      child: isStarting.value
-                          ? LinearProgressIndicator(
-                              backgroundColor: Colors.transparent,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )
-                          : Text(t.intro.start),
+                  ),
+                  SliverCrossAxisConstrained(
+                    maxCrossAxisExtent: 368,
+                    child: MultiSliver(
+                      children: [
+                        const LocalePrefTile(),
+                        const SliverGap(4),
+                        const RegionPrefTile(),
+                        const SliverGap(4),
+                        const EnableAnalyticsPrefTile(),
+                        const SliverGap(4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text.rich(
+                            t.intro.termsAndPolicyCaution(
+                              tap: (text) => TextSpan(
+                                text: text,
+                                style: const TextStyle(color: Colors.blue),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () async {
+                                    await UriUtils.tryLaunch(
+                                      Uri.parse(
+                                          Constants.termsAndConditionsUrl),
+                                    );
+                                  },
+                              ),
+                            ),
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
+                          child: FilledButton(
+                            onPressed: () async {
+                              if (isStarting.value) return;
+                              isStarting.value = true;
+                              if (!ref
+                                  .read(analyticsControllerProvider)
+                                  .requireValue) {
+                                loggy.info(
+                                    "disabling analytics per user request");
+                                try {
+                                  await ref
+                                      .read(
+                                          analyticsControllerProvider.notifier)
+                                      .disableAnalytics();
+                                } catch (error, stackTrace) {
+                                  loggy.error(
+                                    "could not disable analytics",
+                                    error,
+                                    stackTrace,
+                                  );
+                                }
+                              }
+                              await ref
+                                  .read(Preferences.introCompleted.notifier)
+                                  .update(true);
+                            },
+                            child: isStarting.value
+                                ? LinearProgressIndicator(
+                                    backgroundColor: Colors.transparent,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface,
+                                  )
+                                : Text(t.intro.start),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

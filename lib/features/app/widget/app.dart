@@ -21,6 +21,30 @@ import 'package:upgrader/upgrader.dart';
 
 bool _debugAccessibility = false;
 
+/// Force Android-like scrolling on iOS so the UI feels identical:
+/// - no bounce (clamping)
+/// - show overscroll glow (like Android)
+class _AndroidScrollBehavior extends MaterialScrollBehavior {
+  const _AndroidScrollBehavior();
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return GlowingOverscrollIndicator(
+      axisDirection: details.direction,
+      color: Theme.of(context).colorScheme.primary,
+      child: child,
+    );
+  }
+}
+
 class App extends HookConsumerWidget with PresLogger {
   const App({super.key});
 
@@ -41,6 +65,7 @@ class App extends HookConsumerWidget with PresLogger {
           ConnectionWrapper(
             MaterialApp.router(
               routerConfig: router,
+              scrollBehavior: const _AndroidScrollBehavior(),
               locale: locale.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -55,6 +80,20 @@ class App extends HookConsumerWidget with PresLogger {
                   navigatorKey: router.routerDelegate.navigatorKey,
                   child: child ?? const SizedBox(),
                 );
+
+                // 100% Android parity: remove all system safe-area padding on iOS
+                // so layouts match Android even on notched devices.
+                if (defaultTargetPlatform == TargetPlatform.iOS) {
+                  child = MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    removeBottom: true,
+                    removeLeft: true,
+                    removeRight: true,
+                    child: child,
+                  );
+                }
+
                 if (kDebugMode && _debugAccessibility) {
                   return AccessibilityTools(
                     checkFontOverflows: true,

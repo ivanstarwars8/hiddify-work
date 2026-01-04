@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
@@ -24,6 +25,7 @@ class ProfilesOverviewModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
     final asyncProfiles = ref.watch(profilesOverviewNotifierProvider);
+    final iosParity = defaultTargetPlatform == TargetPlatform.iOS;
 
     ref.listen(
       foregroundProfilesUpdateNotifierProvider,
@@ -44,83 +46,140 @@ class ProfilesOverviewModal extends HookConsumerWidget {
       },
     );
 
-    return SafeArea(
-      child: Stack(
-        children: [
-          CustomScrollView(
-            controller: scrollController,
-            slivers: [
-              switch (asyncProfiles) {
-                AsyncData(value: final profiles) => SliverList.builder(
-                    itemBuilder: (context, index) {
-                      final profile = profiles[index];
-                      return ProfileTile(profile: profile);
-                    },
-                    itemCount: profiles.length,
-                  ),
-                AsyncError(:final error) => SliverErrorBodyPlaceholder(
-                    t.presentShortError(error),
-                  ),
-                AsyncLoading() => const SliverLoadingBodyPlaceholder(),
-                _ => const SliverToBoxAdapter(),
-              },
-              const SliverGap(48),
-            ],
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: SafeArea(
-                  top: false,
-                  child: GoBullSectionCard(
-                    title: t.profile.overviewPageTitle,
-                    icon: Icons.inventory_2_rounded,
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: FilledButton.icon(
-                              onPressed: () => const AddProfileRoute().push(context),
-                              icon: const Icon(Icons.add_rounded),
-                              label: Text(t.profile.add.shortBtnTxt),
+    final content = Stack(
+      children: [
+        CustomScrollView(
+          controller: scrollController,
+          slivers: [
+            switch (asyncProfiles) {
+              AsyncData(value: final profiles) => SliverList.builder(
+                  itemBuilder: (context, index) {
+                    final profile = profiles[index];
+                    return ProfileTile(profile: profile);
+                  },
+                  itemCount: profiles.length,
+                ),
+              AsyncError(:final error) => SliverErrorBodyPlaceholder(
+                  t.presentShortError(error),
+                ),
+              AsyncLoading() => const SliverLoadingBodyPlaceholder(),
+              _ => const SliverToBoxAdapter(),
+            },
+            const SliverGap(48),
+          ],
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: iosParity
+                  ? GoBullSectionCard(
+                      title: t.profile.overviewPageTitle,
+                      icon: Icons.inventory_2_rounded,
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.icon(
+                                onPressed: () =>
+                                    const AddProfileRoute().push(context),
+                                icon: const Icon(Icons.add_rounded),
+                                label: Text(t.profile.add.shortBtnTxt),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          IconButton.filledTonal(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return const ProfilesSortModal();
+                            const SizedBox(width: 10),
+                            IconButton.filledTonal(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const ProfilesSortModal();
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.sort_rounded),
+                              tooltip: t.general.sort,
+                            ),
+                            const SizedBox(width: 10),
+                            IconButton.filledTonal(
+                              onPressed: () async {
+                                await ref
+                                    .read(
+                                      foregroundProfilesUpdateNotifierProvider
+                                          .notifier,
+                                    )
+                                    .trigger();
+                              },
+                              icon: const Icon(Icons.refresh_rounded),
+                              tooltip: t.profile.update.updateSubscriptions,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SafeArea(
+                      top: false,
+                      child: GoBullSectionCard(
+                        title: t.profile.overviewPageTitle,
+                        icon: Icons.inventory_2_rounded,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 0),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton.icon(
+                                  onPressed: () =>
+                                      const AddProfileRoute().push(context),
+                                  icon: const Icon(Icons.add_rounded),
+                                  label: Text(t.profile.add.shortBtnTxt),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              IconButton.filledTonal(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const ProfilesSortModal();
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                            icon: const Icon(Icons.sort_rounded),
-                            tooltip: t.general.sort,
+                                icon: const Icon(Icons.sort_rounded),
+                                tooltip: t.general.sort,
+                              ),
+                              const SizedBox(width: 10),
+                              IconButton.filledTonal(
+                                onPressed: () async {
+                                  await ref
+                                      .read(
+                                        foregroundProfilesUpdateNotifierProvider
+                                            .notifier,
+                                      )
+                                      .trigger();
+                                },
+                                icon: const Icon(Icons.refresh_rounded),
+                                tooltip: t.profile.update.updateSubscriptions,
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          IconButton.filledTonal(
-                            onPressed: () async {
-                              await ref.read(foregroundProfilesUpdateNotifierProvider.notifier).trigger();
-                            },
-                            icon: const Icon(Icons.refresh_rounded),
-                            tooltip: t.profile.update.updateSubscriptions,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+
+    return iosParity ? content : SafeArea(child: content);
   }
 }
 

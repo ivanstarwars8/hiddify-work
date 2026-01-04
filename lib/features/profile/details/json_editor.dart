@@ -6,7 +6,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:dartx/dartx.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,11 +20,11 @@ const _textSpacer = SizedBox(width: 5);
 const _newKey = "new_key_added";
 const _downArrow = SizedBox(
   width: _expandIconWidth,
-  child: Icon(CupertinoIcons.arrowtriangle_down_fill, size: 14),
+  child: Icon(Icons.expand_more_rounded, size: 16),
 );
 const _rightArrow = SizedBox(
   width: _expandIconWidth,
-  child: Icon(CupertinoIcons.arrowtriangle_right_fill, size: 14),
+  child: Icon(Icons.chevron_right_rounded, size: 16),
 );
 const _newDataValue = {
   "string": "",
@@ -1561,7 +1560,7 @@ class _SearchField extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(width: 2),
-          const Icon(CupertinoIcons.search, size: 20),
+          const Icon(Icons.search_rounded, size: 20),
           const SizedBox(width: 5),
           TextField(
             onChanged: onChanged,
@@ -1591,7 +1590,7 @@ class _SearchField extends StatelessWidget {
             child: const Tooltip(
               message: 'Next',
               child: Icon(
-                CupertinoIcons.arrowtriangle_down_fill,
+                Icons.keyboard_arrow_down_rounded,
                 size: 20,
               ),
             ),
@@ -1604,7 +1603,7 @@ class _SearchField extends StatelessWidget {
             child: const Tooltip(
               message: 'Previous',
               child: Icon(
-                CupertinoIcons.arrowtriangle_up_fill,
+                Icons.keyboard_arrow_up_rounded,
                 size: 20,
               ),
             ),

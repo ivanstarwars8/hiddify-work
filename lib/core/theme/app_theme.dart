@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddify/core/theme/app_theme_mode.dart';
 import 'package:hiddify/core/theme/theme_extensions.dart';
@@ -33,16 +34,36 @@ class AppTheme {
   }
 
   ThemeData _baseTheme(ColorScheme scheme) {
+    // iOS parity: force Material widgets to render with Android visuals so the
+    // UI matches Android pixel-for-pixel as close as possible.
+    final platform = defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS
+        ? TargetPlatform.android
+        : defaultTargetPlatform;
+
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       fontFamily: fontFamily,
+      platform: platform,
     );
 
     final textTheme = _textTheme(base);
 
     return base.copyWith(
       textTheme: textTheme,
+      // iOS parity: force Android-like page transitions everywhere.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.macOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: ZoomPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,

@@ -5,18 +5,8 @@ class AdaptiveIcon {
 
   final TargetPlatform platform;
 
-  IconData get more => switch (platform) {
-        TargetPlatform.iOS ||
-        TargetPlatform.macOS =>
-          Icons.more_horiz,
-        _ => Icons.more_vert,
-      };
+  // Go Bull iOS parity: use the same Material icons as Android everywhere.
+  IconData get more => Icons.more_vert;
 
-  IconData get share => switch (platform) {
-        TargetPlatform.android => Icons.share_rounded,
-        TargetPlatform.iOS ||
-        TargetPlatform.macOS =>
-          Icons.ios_share_rounded,
-        _ => Icons.share,
-      };
+  IconData get share => Icons.share_rounded;
 }

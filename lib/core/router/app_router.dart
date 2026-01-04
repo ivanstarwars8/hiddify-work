@@ -14,8 +14,15 @@ part 'app_router.g.dart';
 
 bool _debugMobileRouter = false;
 
-final useMobileRouter =
-    !PlatformUtils.isDesktop || (kDebugMode && _debugMobileRouter);
+// Go Bull parity: make Windows/macOS look like Android by using the "mobile"
+// router/layout even on desktop builds.
+final _forceMobileUi =
+    defaultTargetPlatform == TargetPlatform.windows ||
+    defaultTargetPlatform == TargetPlatform.macOS;
+
+final useMobileRouter = _forceMobileUi ||
+    !PlatformUtils.isDesktop ||
+    (kDebugMode && _debugMobileRouter);
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 // TODO: test and improve handling of deep link

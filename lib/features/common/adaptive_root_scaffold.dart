@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/router.dart';
@@ -20,6 +21,9 @@ class AdaptiveRootScaffold extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
+    final forceMobileUi =
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS;
 
     final selectedIndex = getCurrentIndex(context);
 
@@ -43,7 +47,8 @@ class AdaptiveRootScaffold extends HookConsumerWidget {
       destinations: destinations,
       drawerDestinationRange: (0, null),
       bottomDestinationRange: (0, 2),
-      useBottomSheet: useMobileRouter,
+      useBottomSheet: useMobileRouter || forceMobileUi,
+      forceMobileUi: forceMobileUi,
       sidebarTrailing: const Expanded(
         child: Align(
           alignment: Alignment.bottomCenter,
@@ -63,6 +68,7 @@ class _CustomAdaptiveScaffold extends HookConsumerWidget {
     required this.drawerDestinationRange,
     required this.bottomDestinationRange,
     this.useBottomSheet = false,
+    this.forceMobileUi = false,
     this.sidebarTrailing,
     required this.body,
   });
@@ -73,6 +79,7 @@ class _CustomAdaptiveScaffold extends HookConsumerWidget {
   final (int, int?) drawerDestinationRange;
   final (int, int?) bottomDestinationRange;
   final bool useBottomSheet;
+  final bool forceMobileUi;
   final Widget? sidebarTrailing;
   final Widget body;
 
@@ -93,7 +100,7 @@ class _CustomAdaptiveScaffold extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       key: RootScaffold.stateKey,
-      drawer: Breakpoints.small.isActive(context)
+      drawer: (!forceMobileUi && Breakpoints.small.isActive(context))
           ? Drawer(
               width: (MediaQuery.sizeOf(context).width * 0.88).clamp(1, 304),
               child: NavigationRail(
@@ -110,28 +117,30 @@ class _CustomAdaptiveScaffold extends HookConsumerWidget {
       body: AdaptiveLayout(
         primaryNavigation: SlotLayout(
           config: <Breakpoint, SlotLayoutConfig>{
-            Breakpoints.medium: SlotLayout.from(
-              key: const Key('primaryNavigation'),
-              builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                selectedIndex: selectedIndex,
-                destinations: destinations
-                    .map((dest) => AdaptiveScaffold.toRailDestination(dest))
-                    .toList(),
-                onDestinationSelected: onSelectedIndexChange,
+            if (!forceMobileUi) ...{
+              Breakpoints.medium: SlotLayout.from(
+                key: const Key('primaryNavigation'),
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  selectedIndex: selectedIndex,
+                  destinations: destinations
+                      .map((dest) => AdaptiveScaffold.toRailDestination(dest))
+                      .toList(),
+                  onDestinationSelected: onSelectedIndexChange,
+                ),
               ),
-            ),
-            Breakpoints.large: SlotLayout.from(
-              key: const Key('primaryNavigation1'),
-              builder: (_) => AdaptiveScaffold.standardNavigationRail(
-                extended: true,
-                selectedIndex: selectedIndex,
-                destinations: destinations
-                    .map((dest) => AdaptiveScaffold.toRailDestination(dest))
-                    .toList(),
-                onDestinationSelected: onSelectedIndexChange,
-                trailing: sidebarTrailing,
+              Breakpoints.large: SlotLayout.from(
+                key: const Key('primaryNavigation1'),
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  extended: true,
+                  selectedIndex: selectedIndex,
+                  destinations: destinations
+                      .map((dest) => AdaptiveScaffold.toRailDestination(dest))
+                      .toList(),
+                  onDestinationSelected: onSelectedIndexChange,
+                  trailing: sidebarTrailing,
+                ),
               ),
-            ),
+            },
           },
         ),
         body: SlotLayout(
@@ -146,7 +155,8 @@ class _CustomAdaptiveScaffold extends HookConsumerWidget {
         ),
       ),
       // AdaptiveLayout bottom sheet has accessibility issues
-      bottomNavigationBar: useBottomSheet && Breakpoints.small.isActive(context)
+      bottomNavigationBar: useBottomSheet &&
+              (forceMobileUi || Breakpoints.small.isActive(context))
           ? NavigationBar(
               selectedIndex: selectedWithOffset(bottomDestinationRange) ?? 0,
               destinations: destinationsSlice(bottomDestinationRange),

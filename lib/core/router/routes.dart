@@ -75,10 +75,16 @@ GlobalKey<NavigatorState>? _dynamicRootKey = useMobileRouter ? rootNavigatorKey 
     TypedGoRoute<MenuRoute>(
       path: "/menu",
       name: MenuRoute.name,
-    ),
-    TypedGoRoute<ProxiesRoute>(
-      path: "/proxies",
-      name: ProxiesRoute.name,
+      routes: [
+        TypedGoRoute<MenuProxiesRoute>(
+          path: "proxies",
+          name: MenuProxiesRoute.name,
+        ),
+        TypedGoRoute<MenuAboutRoute>(
+          path: "about",
+          name: MenuAboutRoute.name,
+        ),
+      ],
     ),
   ],
 )
@@ -192,15 +198,39 @@ class MenuRoute extends GoRouteData {
   }
 }
 
-class ProxiesRoute extends GoRouteData {
-  const ProxiesRoute();
-  static const name = "Proxies";
-
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+class MenuProxiesRoute extends GoRouteData {
+  const MenuProxiesRoute();
+  static const name = "Menu Proxies";
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return const MaterialPage(
+      name: name,
+      child: ProxiesOverviewPage(),
+    );
+  }
+}
+
+class MenuAboutRoute extends GoRouteData {
+  const MenuAboutRoute();
+  static const name = "Menu About";
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return const MaterialPage(
+      name: name,
+      child: AboutPage(),
+    );
+  }
+}
+
+class ProxiesRoute extends GoRouteData {
+  const ProxiesRoute();
+  static const name = "Proxies";
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return const NoTransitionPage(
       name: name,
       child: ProxiesOverviewPage(),
     );

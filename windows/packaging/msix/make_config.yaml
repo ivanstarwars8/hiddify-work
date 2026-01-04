@@ -1,5 +1,5 @@
-display_name: Go-bull
-publisher_display_name: Go-bull
+display_name: Go Bull
+publisher_display_name: Go Bull
 identity_name: GoBull.GoBullApp
 msix_version: 2.5.7.0
 logo_path: windows\runner\resources\app_icon.ico

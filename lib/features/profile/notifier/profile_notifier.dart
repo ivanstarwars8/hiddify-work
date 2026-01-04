@@ -77,7 +77,8 @@ class AddProfile extends _$AddProfile with AppLogger {
           loggy.debug("adding profile, content");
           var name = parsed.name;
           var oldItem = await _profilesRepo.getByName(name);
-          if (name == "Go-bull WARP" && oldItem != null) {
+          if ((name == "Go-bull WARP" || name == "Go Bull WARP") &&
+              oldItem != null) {
             _profilesRepo.deleteById(oldItem.id).run();
           }
           while (await _profilesRepo.getByName(name) != null) {

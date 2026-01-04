@@ -1,11 +1,11 @@
 {
-    "name": "Go-bull",
-    "short_name": "Go-bull",
+    "name": "Go Bull",
+    "short_name": "Go Bull",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Go-bull",
+    "description": "Go Bull",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

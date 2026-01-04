@@ -1,11 +1,11 @@
 app_id: 6L903538-42B1-4596-G479-BJ779F21A65D
-publisher: Go-bull
+publisher: Go Bull
 publisher_url: https://panel.go-bull.pro
-display_name: Go-bull
+display_name: Go Bull
 executable_name: GoBull.exe
 output_base_file_name: GoBull.exe
 create_desktop_icon: true
-install_dir_name: "{autopf64}\\Go-bull"
+install_dir_name: "{autopf64}\\Go Bull"
 setup_icon_file: ..\..\windows\runner\resources\app_icon.ico
 locales:
   - ar

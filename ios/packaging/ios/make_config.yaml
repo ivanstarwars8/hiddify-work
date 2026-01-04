@@ -1,9 +1,9 @@
-display_name: Go-bull
+display_name: Go Bull
 
 icon: ..\..\assets\images\windows.ico
 
 keywords:
-  - Go-bull
+  - Go Bull
   - Proxy
   - VPN
   - V2ray
@@ -12,7 +12,7 @@ keywords:
   - Psiphon
   - OpenVPN
 
-generic_name: Go-bull
+generic_name: Go Bull
 
 actions:
   - name: Start
