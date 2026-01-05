@@ -74,4 +74,22 @@ post_install do |installer|
   else
     puts "Sentry header not found (skipping patch): #{sentry_header}"
   end
+
+  # CI/macOS (Xcode 16+): some SentryCrash C++ files rely on indirect includes
+  # that are no longer provided; add missing <exception> for std::terminate_handler.
+  sentry_cpp = File.join(__dir__, 'Pods', 'Sentry', 'Sources', 'SentryCrash', 'Recording', 'Monitors', 'SentryCrashMonitor_CPPException.cpp')
+  if File.exist?(sentry_cpp)
+    begin
+      original = File.read(sentry_cpp)
+      unless original.include?('#include <exception>')
+        patched = "#include <exception>\n" + original
+        File.write(sentry_cpp, patched)
+        puts "Patched SentryCrashMonitor_CPPException.cpp to include <exception>"
+      end
+    rescue => e
+      puts "Failed to patch SentryCrash C++ file: #{e}"
+    end
+  else
+    puts "SentryCrash C++ file not found (skipping patch): #{sentry_cpp}"
+  end
 end
