@@ -53,10 +53,10 @@ jobs:
         run: dart run slang
 
       - name: Fetch Windows core libs
-        run: make windows-libs CHANNEL=${{ inputs.channel }}
+        run: make windows-libs CHANNEL=${{ inputs.channel }} IS_GITHUB_ACTIONS=1
 
       - name: Build Windows (release)
-        run: flutter build windows --release --target ${{ inputs.build_target }}
+        run: flutter build windows --release --target ${{ inputs.build_target }} --verbose
 
       - name: Package portable ZIP
         shell: pwsh

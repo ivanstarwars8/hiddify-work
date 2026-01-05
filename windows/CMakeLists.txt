@@ -81,14 +81,29 @@ install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}
 install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
 
-# install(FILES "../libcore/bin/libcore.dll" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-#  COMPONENT Runtime)
+set(GOBULL_LIBCORE_DLL "${CMAKE_CURRENT_LIST_DIR}/../libcore/bin/libcore.dll")
+if(EXISTS "${GOBULL_LIBCORE_DLL}")
+  install(
+    FILES "${GOBULL_LIBCORE_DLL}"
+    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime
+    RENAME libcore.dll
+  )
+else()
+  message(WARNING "GoBull: libcore.dll not found at ${GOBULL_LIBCORE_DLL} (skipping install)")
+endif()
 
-install(FILES "../libcore/bin/libcore.dll" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-COMPONENT Runtime RENAME libcore.dll)
-
-install(FILES "../libcore/bin/HiddifyCli.exe" DESTINATION "${CMAKE_INSTALL_PREFIX}"
-COMPONENT Runtime RENAME GoBullCli.exe)
+set(GOBULL_CORE_CLI "${CMAKE_CURRENT_LIST_DIR}/../libcore/bin/HiddifyCli.exe")
+if(EXISTS "${GOBULL_CORE_CLI}")
+  install(
+    FILES "${GOBULL_CORE_CLI}"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+    COMPONENT Runtime
+    RENAME GoBullCli.exe
+  )
+else()
+  message(WARNING "GoBull: HiddifyCli.exe not found at ${GOBULL_CORE_CLI} (skipping install)")
+endif()
 
 
 if(PLUGIN_BUNDLED_LIBRARIES)
