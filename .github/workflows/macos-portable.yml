@@ -1,0 +1,87 @@
+name: Build macOS (portable)
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Channel for core libs (prod/dev)"
+        required: true
+        default: "prod"
+        type: choice
+        options:
+          - prod
+          - dev
+      build_target:
+        description: "Dart entrypoint"
+        required: true
+        default: "lib/main_prod.dart"
+        type: choice
+        options:
+          - lib/main_prod.dart
+          - lib/main.dart
+
+concurrency:
+  group: macos-portable-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.3"
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Generate code (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate translations (slang)
+        run: dart run slang
+
+      - name: Fetch macOS core libs
+        run: make macos-libs CHANNEL=${{ inputs.channel }} IS_GITHUB_ACTIONS=1
+
+      - name: Build macOS (release)
+        run: flutter build macos --release --target ${{ inputs.build_target }} --verbose
+
+      - name: Package portable ZIP (.app)
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_DIR="build/macos/Build/Products/Release"
+          echo "Listing: $APP_DIR"
+          ls -la "$APP_DIR"
+          APP_PATH="$(find "$APP_DIR" -maxdepth 1 -name '*.app' -print -quit)"
+          if [ -z "${APP_PATH:-}" ]; then
+            echo "No .app found under $APP_DIR"
+            exit 1
+          fi
+          mkdir -p out
+          ZIP_PATH="out/GoBull-macOS-portable.zip"
+          rm -f "$ZIP_PATH"
+          # Keep parent folder so users can unzip and drag .app
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$ZIP_PATH"
+          ls -lah "$ZIP_PATH"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-portable
+          if-no-files-found: error
+          path: out/*.zip
+
+
