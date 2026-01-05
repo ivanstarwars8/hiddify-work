@@ -55,4 +55,23 @@ post_install do |installer|
       config.build_settings[deployment_target_key] = minimum_deployment_target
     end
   end
+
+  # CI/macOS (Xcode 16+): workaround for Sentry pod using std::vector<const T>
+  # which fails with newer libc++ (std::allocator does not support const types).
+  # Remove the const qualifier in the internal cache vector.
+  sentry_header = File.join(__dir__, 'Pods', 'Sentry', 'Sources', 'Sentry', 'include', 'SentryThreadMetadataCache.hpp')
+  if File.exist?(sentry_header)
+    begin
+      original = File.read(sentry_header)
+      patched = original.gsub('std::vector<const ThreadHandleMetadataPair>', 'std::vector<ThreadHandleMetadataPair>')
+      if patched != original
+        File.write(sentry_header, patched)
+        puts "Patched SentryThreadMetadataCache.hpp to avoid std::vector<const T> build error"
+      end
+    rescue => e
+      puts "Failed to patch Sentry header: #{e}"
+    end
+  else
+    puts "Sentry header not found (skipping patch): #{sentry_header}"
+  end
 end
