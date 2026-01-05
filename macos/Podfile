@@ -92,4 +92,23 @@ post_install do |installer|
   else
     puts "SentryCrash C++ file not found (skipping patch): #{sentry_cpp}"
   end
+
+  # CI/macOS (Xcode 16+): ucontext64_t is not visible under modular headers unless
+  # sys/_types/_ucontext64.h is explicitly included (SentryCrashMachineContext.c uses it).
+  sentry_ucontext_c = File.join(__dir__, 'Pods', 'Sentry', 'Sources', 'SentryCrash', 'Recording', 'Tools', 'SentryCrashMachineContext.c')
+  if File.exist?(sentry_ucontext_c)
+    begin
+      original = File.read(sentry_ucontext_c)
+      include_line = '#include <sys/_types/_ucontext64.h>'
+      unless original.include?(include_line)
+        patched = include_line + "\n" + original
+        File.write(sentry_ucontext_c, patched)
+        puts "Patched SentryCrashMachineContext.c to include sys/_types/_ucontext64.h"
+      end
+    rescue => e
+      puts "Failed to patch SentryCrashMachineContext.c: #{e}"
+    end
+  else
+    puts "SentryCrashMachineContext.c not found (skipping patch): #{sentry_ucontext_c}"
+  end
 end
