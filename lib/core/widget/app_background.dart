@@ -10,12 +10,21 @@ class AppBackground extends StatelessWidget {
   // The source image is 1024x1536 (2:3).
   static const _imageAspect = 1024 / 1536;
 
-  bool _shouldShowImage(double screenAspect) {
-    // If aspect is too different, the image won't "fit" naturally without
-    // cropping or excessive empty space. In that case we fallback to the
-    // default premium dark background (no image) as requested.
-    final relDiff = ((screenAspect / _imageAspect) - 1).abs();
-    return relDiff <= 0.12;
+  bool _shouldShowImage({
+    required double screenAspect,
+    required double w,
+    required double h,
+  }) {
+    // Show on portrait phones (cropping is acceptable and looks natural).
+    // Hide on landscape / very wide layouts where the photo becomes awkward.
+    final isPortrait = h >= w;
+    if (!isPortrait) return false;
+
+    // Typical phones: ~0.45..0.60. Tablets can be ~0.75.
+    // If too wide, fallback to plain premium dark background.
+    if (screenAspect > 0.82) return false;
+
+    return true;
   }
 
   @override
@@ -25,7 +34,11 @@ class AppBackground extends StatelessWidget {
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
         final screenAspect = (w > 0 && h > 0) ? (w / h) : _imageAspect;
-        final showImage = _shouldShowImage(screenAspect);
+        final showImage = _shouldShowImage(
+          screenAspect: screenAspect,
+          w: w,
+          h: h,
+        );
 
         return Stack(
           fit: StackFit.expand,
