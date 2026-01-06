@@ -176,7 +176,11 @@ jobs:
       - name: Prepare for ${{ matrix.platform }}
         run: |
           make ${{ matrix.platform }}-prepare
-          tree
+          if command -v tree >/dev/null 2>&1; then
+            tree
+          else
+            echo "tree not installed; skipping directory listing"
+          fi
       - name: Build ${{ matrix.platform }}
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
