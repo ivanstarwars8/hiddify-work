@@ -8,28 +8,37 @@ class AppTheme {
   final AppThemeMode mode;
   final String fontFamily;
 
-  // GO BULL: Бордово-золотая тема с “пыльным” характером
-  static const _seed = Color(0xFF6D1B1B); // Глубокий бордо (бык)
-  static const _bullGold = Color(0xFFE3B23C); // Тёплый золотой акцент
-  static const _bullAmber = Color(0xFFD4A017); // Янтарный
-  static const _bullSurface = Color(0xFF130808); // Тёмная поверхность
-  static const _bullSurfaceHigh = Color(0xFF1C0D0D);
-  static const _bullSurfaceLow = Color(0xFF0F0606);
+  // Premium dark: polished stone + minimal electronics.
+  // Keep accent colors subtle; vivid accents are reserved for state indication.
+  static const _seed = Color(0xFF2F2F2F);
+  static const _trueBlack = Color(0xFF0A0A0A);
+  static const _surface = Color(0xFF121212);
+  static const _surfaceHigh = Color(0xFF1A1A1A);
+  static const _surfaceHighest = Color(0xFF232323);
+  static const _surfaceLow = Color(0xFF0E0E0E);
 
   TextTheme _textTheme(ThemeData base) {
-    // GO BULL: Жирный, мощный шрифт - как бык
     final t = base.textTheme;
     return t.copyWith(
-      displayLarge: t.displayLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -1),
-      displayMedium: t.displayMedium?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -0.5),
-      headlineLarge: t.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
-      headlineMedium: t.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-      headlineSmall: t.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-      titleLarge: t.titleLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -0.3),
-      titleMedium: t.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-      titleSmall: t.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-      labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.5),
-      labelMedium: t.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+      displayLarge: t.displayLarge?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.8,
+      ),
+      displayMedium: t.displayMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.5,
+      ),
+      headlineLarge: t.headlineLarge?.copyWith(fontWeight: FontWeight.w700),
+      headlineMedium: t.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+      headlineSmall: t.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+      titleLarge: t.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      titleMedium: t.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+      titleSmall: t.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+      labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+      labelMedium: t.labelMedium?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 
@@ -74,14 +83,17 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardTheme(
-        color: _bullSurfaceHigh,
-        elevation: 3,
-        shadowColor: _bullAmber.withOpacity(0.18),
+        color: _surfaceHigh,
+        elevation: 10,
+        shadowColor: Colors.black.withOpacity(0.65),
         surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: scheme.outlineVariant.withOpacity(0.35), width: 1),
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(
+            color: scheme.outlineVariant.withOpacity(0.35),
+            width: 1,
+          ),
         ),
       ),
       listTileTheme: ListTileThemeData(
@@ -93,16 +105,16 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 68,
-        backgroundColor: _bullSurface,
-        indicatorColor: scheme.primaryContainer,
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.surfaceVariant,
         labelTextStyle: WidgetStatePropertyAll(
           textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: _bullSurface,
-        indicatorColor: scheme.primaryContainer,
-        selectedIconTheme: IconThemeData(color: scheme.onPrimaryContainer),
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.surfaceVariant,
+        selectedIconTheme: IconThemeData(color: scheme.onSurface),
         selectedLabelTextStyle: textTheme.labelMedium?.copyWith(
           color: scheme.onSurface,
           fontWeight: FontWeight.w700,
@@ -118,9 +130,9 @@ class AppTheme {
           padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           ),
-          elevation: const WidgetStatePropertyAll(6),
-          shadowColor: WidgetStatePropertyAll(_bullAmber.withOpacity(0.35)),
-          backgroundColor: WidgetStatePropertyAll(_seed),
+          elevation: const WidgetStatePropertyAll(10),
+          shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.55)),
+          backgroundColor: const WidgetStatePropertyAll(_surfaceHighest),
           foregroundColor: const WidgetStatePropertyAll(Colors.white),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
@@ -128,7 +140,7 @@ class AppTheme {
             ),
           ),
           textStyle: WidgetStatePropertyAll(
-            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900, letterSpacing: 0.8),
+            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -143,13 +155,13 @@ class AppTheme {
             ),
           ),
           textStyle: WidgetStatePropertyAll(
-            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800),
+            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surfaceContainerHighest,
+        fillColor: scheme.surfaceContainerHighest.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide.none,
@@ -173,20 +185,21 @@ class AppTheme {
               brightness: Brightness.dark,
             ))
         .copyWith(
-      primary: _seed,
-      onPrimary: Colors.white,
-      primaryContainer: const Color(0xFF922626),
+      primary: const Color(0xFFBDBDBD),
+      onPrimary: Colors.black,
+      primaryContainer: _surfaceHighest,
       onPrimaryContainer: Colors.white,
-      secondary: _bullGold,
+      secondary: const Color(0xFF9E9E9E),
       onSecondary: Colors.black,
-      secondaryContainer: const Color(0xFF3B2A14),
+      secondaryContainer: _surfaceHighest,
       onSecondaryContainer: Colors.white,
-      surface: _bullSurface,
+      surface: _surface,
       surfaceTint: Colors.transparent,
-      surfaceVariant: _bullSurfaceHigh,
-      background: _bullSurfaceLow,
+      surfaceVariant: _surfaceHigh,
+      background: _surfaceLow,
       outline: Colors.white.withOpacity(0.12),
       outlineVariant: Colors.white.withOpacity(0.08),
+      error: const Color(0xFFFF3B30),
     );
     return _baseTheme(scheme);
   }
@@ -198,25 +211,26 @@ class AppTheme {
               brightness: Brightness.dark,
             ))
         .copyWith(
-      primary: _seed,
-      onPrimary: Colors.white,
-      primaryContainer: const Color(0xFF922626),
+      primary: const Color(0xFFBDBDBD),
+      onPrimary: Colors.black,
+      primaryContainer: _surfaceHighest,
       onPrimaryContainer: Colors.white,
-      secondary: _bullGold,
+      secondary: const Color(0xFF9E9E9E),
       onSecondary: Colors.black,
-      secondaryContainer: const Color(0xFF3B2A14),
+      secondaryContainer: _surfaceHighest,
       onSecondaryContainer: Colors.white,
-      surface: _bullSurface,
+      surface: _surface,
       surfaceTint: Colors.transparent,
-      surfaceVariant: _bullSurfaceHigh,
-      background: _bullSurfaceLow,
+      surfaceVariant: _surfaceHigh,
+      background: _surfaceLow,
       outline: Colors.white.withOpacity(0.12),
       outlineVariant: Colors.white.withOpacity(0.08),
+      error: const Color(0xFFFF3B30),
     );
 
     final base = _baseTheme(scheme);
     return base.copyWith(
-      scaffoldBackgroundColor: mode.trueBlack ? Colors.black : scheme.background,
+      scaffoldBackgroundColor: mode.trueBlack ? _trueBlack : scheme.background,
     );
   }
 }

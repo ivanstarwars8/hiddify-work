@@ -4,12 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiddify/core/localization/translations.dart';
-import 'package:hiddify/core/model/constants.dart';
 import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
 import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/alerts.dart';
 import 'package:hiddify/utils/link_parsers.dart';
@@ -64,27 +62,17 @@ class AccessGatePage extends HookConsumerWidget {
       child: Scaffold(
         body: Stack(
           children: [
-            // Фон градиент + шум
+            // Premium dark background
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF2B0F0F),
-                    Color(0xFF1A0A0A),
-                    Color(0xFF0D0505),
+                    Color(0xFF0A0A0A),
+                    Color(0xFF101010),
+                    Color(0xFF0A0A0A),
                   ],
-                ),
-              ),
-            ),
-            IgnorePointer(
-              child: SvgPicture.asset(
-                'assets/images/noise_overlay.svg',
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.25),
-                  BlendMode.srcIn,
                 ),
               ),
             ),
@@ -95,13 +83,13 @@ class AccessGatePage extends HookConsumerWidget {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 520),
                     child: Card(
-                      color: cs.surface.withOpacity(0.92),
+                      color: cs.surface.withOpacity(0.96),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
-                        side: BorderSide(color: cs.primary.withOpacity(0.35)),
+                        side: BorderSide(color: Colors.white.withOpacity(0.08)),
                       ),
                       elevation: 8,
-                      shadowColor: cs.primary.withOpacity(0.25),
+                      shadowColor: Colors.black.withOpacity(0.65),
                       child: Padding(
                         padding: const EdgeInsets.all(18),
                         child: Column(
@@ -115,14 +103,14 @@ class AccessGatePage extends HookConsumerWidget {
                                 Text(
                                   "Go Bull",
                                   style: theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w800,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                                 Text(
                                   "доступ по подписке",
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: cs.onSurfaceVariant,
+                                    color: cs.onSurface.withOpacity(0.65),
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -187,20 +175,7 @@ class AccessGatePage extends HookConsumerWidget {
                               ],
                             ),
                             const Gap(8),
-                            TextButton.icon(
-                              icon: const Icon(Icons.telegram),
-                              onPressed: () async {
-                                await Clipboard.setData(
-                                  const ClipboardData(
-                                    text: Constants.telegramChannelUrl,
-                                  ),
-                                );
-                                if (!context.mounted) return;
-                                CustomToast.success("Ссылка на TG скопирована.")
-                                    .show(context);
-                              },
-                              label: const Text("TG группа: @go_bull"),
-                            ),
+                            // Deliberately no extra links here: keep focus on the only action.
                           ],
                         ),
                       ),
