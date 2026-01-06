@@ -2,15 +2,6 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-    inputs:
-      build_mode:
-        description: "Build mode"
-        required: true
-        default: "debug"
-        type: choice
-        options:
-          - debug
-          - release
   push:
     branches:
       - main
@@ -64,26 +55,29 @@ jobs:
       - name: Fetch Android core libs
         run: make android-libs CHANNEL=prod
 
+      - name: Remove duplicate core AAR if present
+        run: |
+          ls -lah android/app/libs || true
+          rm -f android/app/libs/hiddify-core.aar || true
+          ls -lah android/app/libs || true
+
       - name: Build APK
         env:
+          # Keep build stable in CI: no daemon, limit workers, give enough heap.
           GRADLE_OPTS: >-
             -Dorg.gradle.daemon=false
             -Dorg.gradle.workers.max=2
-            -Dorg.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8
+            -Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8
+          JAVA_TOOL_OPTIONS: -Xmx4g
         run: |
-          MODE="${{ inputs.build_mode || 'debug' }}"
-          if [ "$MODE" = "release" ]; then
-            flutter build apk --release --verbose
-            ls -lah build/app/outputs/flutter-apk || true
-          else
-            flutter build apk --debug --verbose
-            ls -lah build/app/outputs/flutter-apk || true
-          fi
+          flutter clean
+          flutter build apk --release --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+          ls -lah build/app/outputs/flutter-apk || true
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apk-${{ inputs.build_mode || 'debug' }}
+          name: apk-release-split
           if-no-files-found: error
           path: |
             build/app/outputs/flutter-apk/*.apk
