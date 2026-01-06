@@ -60,22 +60,9 @@ class AccessGatePage extends HookConsumerWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            // Premium dark background
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF0A0A0A),
-                    Color(0xFF101010),
-                    Color(0xFF0A0A0A),
-                  ],
-                ),
-              ),
-            ),
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),

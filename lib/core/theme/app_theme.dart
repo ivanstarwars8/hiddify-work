@@ -201,7 +201,10 @@ class AppTheme {
       outlineVariant: Colors.white.withOpacity(0.08),
       error: const Color(0xFFFF3B30),
     );
-    return _baseTheme(scheme);
+    final base = _baseTheme(scheme);
+    return base.copyWith(
+      scaffoldBackgroundColor: Colors.transparent,
+    );
   }
 
   ThemeData darkTheme(ColorScheme? darkColorScheme) {
@@ -230,7 +233,7 @@ class AppTheme {
 
     final base = _baseTheme(scheme);
     return base.copyWith(
-      scaffoldBackgroundColor: mode.trueBlack ? _trueBlack : scheme.background,
+      scaffoldBackgroundColor: Colors.transparent,
     );
   }
 }

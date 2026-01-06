@@ -9,6 +9,7 @@ import 'package:hiddify/core/model/constants.dart';
 import 'package:hiddify/core/router/router.dart';
 import 'package:hiddify/core/theme/app_theme.dart';
 import 'package:hiddify/core/theme/theme_preferences.dart';
+import 'package:hiddify/core/widget/app_background.dart';
 import 'package:hiddify/features/app_update/notifier/app_update_notifier.dart';
 import 'package:hiddify/features/connection/widget/connection_wrapper.dart';
 import 'package:hiddify/features/profile/notifier/profiles_update_notifier.dart';
@@ -100,7 +101,7 @@ class App extends HookConsumerWidget with PresLogger {
                     child: child,
                   );
                 }
-                return child;
+                return AppBackground(child: child);
               },
             ),
           ),

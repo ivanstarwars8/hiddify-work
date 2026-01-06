@@ -1,7 +1,7 @@
 name: hiddify
 description: Go Bull – standalone cross-platform proxy client (rebranded, not Hiddify UI).
 publish_to: "none"
-version: 2.7.2+20720
+version: 2.7.3+20730
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -125,6 +125,7 @@ flutter:
     # - assets/core/geosite.db
     - assets/images/logo.svg
     - assets/images/noise_overlay.svg
+    - assets/images/app_background.png
     - assets/images/tray_icon.ico
     - assets/images/tray_icon.png
     - assets/images/tray_icon_dark.ico
