@@ -71,7 +71,8 @@ jobs:
           JAVA_TOOL_OPTIONS: -Xmx4g
         run: |
           flutter clean
-          flutter build apk --release --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+          # Build single universal APK (simpler, more stable)
+          flutter build apk --release --verbose 2>&1 | tee /tmp/build.log || { tail -100 /tmp/build.log; exit 1; }
           ls -lah build/app/outputs/flutter-apk || true
 
       - name: Upload APK artifact
