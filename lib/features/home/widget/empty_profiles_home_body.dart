@@ -25,10 +25,11 @@ class EmptyProfilesHomeBody extends HookConsumerWidget {
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(26),
             ),
-            child: Assets.images.logo.svg(
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.onPrimaryContainer,
-                BlendMode.srcIn,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.asset(
+                'assets/images/app_logo.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),

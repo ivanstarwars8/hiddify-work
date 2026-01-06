@@ -46,7 +46,15 @@ class IntroPage extends HookConsumerWidget with PresLogger {
                     height: 224,
                     child: Padding(
                       padding: const EdgeInsets.all(24),
-                      child: Assets.images.logo.svg(),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.asset(
+                          'assets/images/app_logo.png',
+                          width: 92,
+                          height: 92,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -133,7 +141,15 @@ class IntroPage extends HookConsumerWidget with PresLogger {
                       height: 224,
                       child: Padding(
                         padding: const EdgeInsets.all(24),
-                        child: Assets.images.logo.svg(),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),

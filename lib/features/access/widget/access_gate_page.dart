@@ -85,7 +85,15 @@ class AccessGatePage extends HookConsumerWidget {
                           children: [
                             Column(
                               children: [
-                                Assets.images.logo.svg(width: 52, height: 52),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Image.asset(
+                                    'assets/images/app_logo.png',
+                                    width: 52,
+                                    height: 52,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                                 const Gap(10),
                                 Text(
                                   "Go Bull",

@@ -51,8 +51,12 @@ class NestedAppBar extends StatelessWidget {
             color: cs.primaryContainer,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Assets.images.logo.svg(
-            colorFilter: ColorFilter.mode(cs.onPrimaryContainer, BlendMode.srcIn),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/images/app_logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(width: 10),
