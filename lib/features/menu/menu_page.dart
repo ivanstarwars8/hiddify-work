@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/router.dart';
@@ -17,36 +16,8 @@ class MenuPage extends HookConsumerWidget {
     final iosParity = defaultTargetPlatform == TargetPlatform.iOS;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Фон
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF160808),
-                  Color(0xFF2A0F0F),
-                  Color(0xFF120606),
-                ],
-              ),
-            ),
-          ),
-          // Эффект пыли
-          Positioned.fill(
-            child: IgnorePointer(
-              child: SvgPicture.asset(
-                'assets/images/noise_overlay.svg',
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.25),
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-          ),
-          (iosParity
+      backgroundColor: Colors.transparent,
+      body: (iosParity
               ? Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -128,8 +99,6 @@ class MenuPage extends HookConsumerWidget {
                     ),
                   ),
                 )),
-        ],
-      ),
     );
   }
 }
