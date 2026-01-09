@@ -7,6 +7,7 @@ import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/model/constants.dart';
 import 'package:hiddify/core/model/failures.dart';
 import 'package:hiddify/core/widget/adaptive_icon.dart';
+import 'package:hiddify/core/widget/go_bull_logo.dart';
 import 'package:hiddify/features/app_update/notifier/app_update_notifier.dart';
 import 'package:hiddify/features/app_update/notifier/app_update_state.dart';
 import 'package:hiddify/features/app_update/widget/new_version_dialog.dart';
@@ -104,12 +105,7 @@ class AboutPage extends HookConsumerWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                    child: Image.asset(
-                      'assets/images/app_logo.png',
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.cover,
-                    ),
+                    child: const GoBullLogo(size: 64),
                   ),
                   const Gap(16),
                   Column(

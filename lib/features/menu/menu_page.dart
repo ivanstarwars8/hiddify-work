@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/router.dart';
+import 'package:hiddify/features/profile/notifier/profiles_update_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MenuPage extends HookConsumerWidget {
@@ -14,6 +15,20 @@ class MenuPage extends HookConsumerWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final iosParity = defaultTargetPlatform == TargetPlatform.iOS;
+
+    ref.listen(foregroundProfilesUpdateNotifierProvider, (_, next) {
+      final value = next.valueOrNull;
+      if (value == null) return;
+      final msg = value.success
+          ? "Подписка обновлена: ${value.name}"
+          : "Не удалось обновить: ${value.name}";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    });
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -45,11 +60,48 @@ class MenuPage extends HookConsumerWidget {
                               onTap: () => const ProxiesRoute().push(context),
                             ),
                             _MenuTile(
+                              icon: Icons.dns_rounded,
+                              label: t.config.pageTitle,
+                              description: "DNS и сеть",
+                              color: cs.primary,
+                              onTap: () =>
+                                  const ConfigOptionsRoute().push(context),
+                            ),
+                            _MenuTile(
                               icon: Icons.info_rounded,
                               label: t.about.pageTitle,
                               description: "Версия и ссылки",
                               color: cs.tertiary,
                               onTap: () => const AboutRoute().push(context),
+                            ),
+                              _MenuTile(
+                                icon: Icons.settings_rounded,
+                                label: t.settings.pageTitle,
+                                description: "Настройки",
+                                color: cs.primary,
+                                onTap: () => const SettingsRoute().push(context),
+                              ),
+                            _MenuTile(
+                              icon: Icons.receipt_long_rounded,
+                              label: t.logs.pageTitle,
+                              description: "Журналы",
+                              color: cs.tertiary,
+                              onTap: () =>
+                                  const LogsOverviewRoute().push(context),
+                            ),
+                            _MenuTile(
+                              icon: Icons.refresh_rounded,
+                              label: "Обновить подписку",
+                              description: "Принудительно",
+                              color: cs.secondary,
+                              onTap: () async {
+                                await ref
+                                    .read(
+                                      foregroundProfilesUpdateNotifierProvider
+                                          .notifier,
+                                    )
+                                    .trigger();
+                              },
                             ),
                           ],
                         ),
@@ -86,11 +138,48 @@ class MenuPage extends HookConsumerWidget {
                                     const MenuProxiesRoute().push(context),
                               ),
                               _MenuTile(
+                                icon: Icons.dns_rounded,
+                                label: t.config.pageTitle,
+                                description: "DNS и сеть",
+                                color: cs.primary,
+                                onTap: () =>
+                                    const ConfigOptionsRoute().push(context),
+                              ),
+                              _MenuTile(
                                 icon: Icons.info_rounded,
                                 label: t.about.pageTitle,
                                 description: "Версия и ссылки",
                                 color: cs.tertiary,
                                 onTap: () => const MenuAboutRoute().push(context),
+                              ),
+                              _MenuTile(
+                                icon: Icons.settings_rounded,
+                                label: t.settings.pageTitle,
+                                description: "Настройки",
+                                color: cs.primary,
+                                onTap: () => const SettingsRoute().push(context),
+                              ),
+                              _MenuTile(
+                                icon: Icons.receipt_long_rounded,
+                                label: t.logs.pageTitle,
+                                description: "Журналы",
+                                color: cs.tertiary,
+                                onTap: () =>
+                                    const LogsOverviewRoute().push(context),
+                              ),
+                              _MenuTile(
+                                icon: Icons.refresh_rounded,
+                                label: "Обновить подписку",
+                                description: "Принудительно",
+                                color: cs.secondary,
+                                onTap: () async {
+                                  await ref
+                                      .read(
+                                        foregroundProfilesUpdateNotifierProvider
+                                            .notifier,
+                                      )
+                                      .trigger();
+                                },
                               ),
                             ],
                           ),

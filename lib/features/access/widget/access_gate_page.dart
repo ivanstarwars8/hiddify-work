@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/preferences/general_preferences.dart';
 import 'package:hiddify/core/router/routes.dart';
+import 'package:hiddify/core/widget/go_bull_logo.dart';
 import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/profile/notifier/profile_notifier.dart';
 import 'package:hiddify/gen/assets.gen.dart';
@@ -52,6 +53,13 @@ class AccessGatePage extends HookConsumerWidget {
         return;
       }
       await ref.read(addProfileProvider.notifier).add(url);
+      // If we're still gated, explain why (prevents "stuck" feeling).
+      final ok = ref.read(hasValidGoBullSubscriptionProvider).valueOrNull ?? false;
+      if (!ok && context.mounted) {
+        CustomToast.error(
+          "Подписка не активна. Оплатите её и обновите через меню.",
+        ).show(context);
+      }
     }
 
     final theme = Theme.of(context);
@@ -87,12 +95,7 @@ class AccessGatePage extends HookConsumerWidget {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(14),
-                                  child: Image.asset(
-                                    'assets/images/app_logo.png',
-                                    width: 52,
-                                    height: 52,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: const GoBullLogo(size: 52),
                                 ),
                                 const Gap(10),
                                 Text(

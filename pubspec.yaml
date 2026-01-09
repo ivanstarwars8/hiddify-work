@@ -158,9 +158,9 @@ flutter_gen:
 flutter_launcher_icons:
   android: true
   ios: false
-  image_path: assets/images/app_logo.png
-  adaptive_icon_background: "#0A0A0A"
-  adaptive_icon_foreground: assets/images/app_logo.png
+  image_path: assets/images/source/ic_launcher.png
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/images/source/ic_launcher_foreground.png
 
 flutter_native_splash:
   color: "#ffffff"

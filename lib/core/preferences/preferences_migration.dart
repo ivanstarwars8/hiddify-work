@@ -15,6 +15,7 @@ class PreferencesMigration with InfraLogger {
       PreferencesVersion1Migration(sharedPreferences),
       PreferencesVersion2Migration(sharedPreferences),
       PreferencesVersion3Migration(sharedPreferences),
+      PreferencesVersion4Migration(sharedPreferences),
     ];
 
     if (currentVersion == migrationSteps.length) {
@@ -134,6 +135,35 @@ class PreferencesVersion1Migration extends PreferencesMigrationStep
         "ipv6Only" => "ipv6_only",
         _ => "",
       };
+}
+
+/// Go Bull: switch default DNS from UDP to DNS-over-TLS (DoT) for users that
+/// never changed the defaults.
+class PreferencesVersion4Migration extends PreferencesMigrationStep
+    with InfraLogger {
+  PreferencesVersion4Migration(super.sharedPreferences);
+
+  static const _remoteDotDefault = "tls://77.88.8.8";
+  static const _directDotDefault = "tls://77.88.8.1";
+
+  @override
+  Future<void> migrate() async {
+    final remote = sharedPreferences.getString("remote-dns-address");
+    if (remote == null || remote == "udp://77.88.8.8") {
+      loggy.debug(
+        "changing [remote-dns-address] from [${remote ?? "(null)"}] to [$_remoteDotDefault]",
+      );
+      await sharedPreferences.setString("remote-dns-address", _remoteDotDefault);
+    }
+
+    final direct = sharedPreferences.getString("direct-dns-address");
+    if (direct == null || direct == "udp://77.88.8.1") {
+      loggy.debug(
+        "changing [direct-dns-address] from [${direct ?? "(null)"}] to [$_directDotDefault]",
+      );
+      await sharedPreferences.setString("direct-dns-address", _directDotDefault);
+    }
+  }
 }
 
 /// Go Bull: полностью отключаем VPN/TUN routing на мобильных, даже если он был включен ранее.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/router.dart';
+import 'package:hiddify/core/widget/go_bull_logo.dart';
 import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -27,10 +28,7 @@ class EmptyProfilesHomeBody extends HookConsumerWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
-                'assets/images/app_logo.png',
-                fit: BoxFit.cover,
-              ),
+              child: const GoBullLogo(size: 72),
             ),
           ),
           const Gap(14),

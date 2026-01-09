@@ -10,6 +10,7 @@ import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/model/constants.dart';
 import 'package:hiddify/core/model/region.dart';
 import 'package:hiddify/core/preferences/general_preferences.dart';
+import 'package:hiddify/core/widget/go_bull_logo.dart';
 import 'package:hiddify/features/common/general_pref_tiles.dart';
 import 'package:hiddify/features/config_option/data/config_option_repository.dart';
 import 'package:hiddify/gen/assets.gen.dart';
@@ -48,12 +49,7 @@ class IntroPage extends HookConsumerWidget with PresLogger {
                       padding: const EdgeInsets.all(24),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          'assets/images/app_logo.png',
-                          width: 92,
-                          height: 92,
-                          fit: BoxFit.cover,
-                        ),
+                        child: const GoBullLogo(size: 92),
                       ),
                     ),
                   ),
@@ -143,12 +139,7 @@ class IntroPage extends HookConsumerWidget with PresLogger {
                         padding: const EdgeInsets.all(24),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-                          child: Image.asset(
-                            'assets/images/app_logo.png',
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
-                          ),
+                          child: const GoBullLogo(size: 56),
                         ),
                       ),
                     ),

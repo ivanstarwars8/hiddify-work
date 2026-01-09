@@ -64,12 +64,9 @@ android {
 
     splits {
         abi {
-            enable true
-            reset()
-            //noinspection ChromeOsAbiSupport
-            include "x86_64", "armeabi-v7a", "arm64-v8a"
-
-            universalApk true
+            // Packaging ABI splits is memory-heavy and can OOM on low-RAM builders.
+            // We ship a single universal APK instead.
+            enable false
         }
     }
 

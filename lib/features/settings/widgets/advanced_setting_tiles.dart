@@ -23,6 +23,14 @@ class AdvancedSettingTiles extends HookConsumerWidget {
 
     return Column(
       children: [
+        ListTile(
+          title: Text(t.config.pageTitle),
+          subtitle: const Text("DNS, IPv6, маршрутизация"),
+          leading: const Icon(Icons.dns_rounded),
+          onTap: () async {
+            await const ConfigOptionsRoute().push(context);
+          },
+        ),
         // const RegionPrefTile(),
         // ListTile(
         //   title: Text(t.settings.geoAssets.pageTitle),

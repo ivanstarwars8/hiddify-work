@@ -60,13 +60,16 @@ abstract class ConfigOptions {
 
   static final remoteDnsAddress = PreferencesNotifier.create<String, String>(
     "remote-dns-address",
-    // Go Bull default: UDP DNS (Yandex 77.88.8.8)
-    "udp://77.88.8.8",
+    // Go Bull default: DNS over TLS (DoT)
+    "tls://77.88.8.8",
     possibleValues: List.of([
       "local",
       // Yandex DNS
       "https://dns.yandex.net/dns-query",
       "https://common.dot.dns.yandex.net/dns-query",
+      "tls://common.dot.dns.yandex.net",
+      "tls://77.88.8.8",
+      "tls://77.88.8.1",
       "udp://77.88.8.8",
       "udp://77.88.8.1",
       "tcp://77.88.8.8",
@@ -75,6 +78,8 @@ abstract class ConfigOptions {
       "udp://1.1.1.1",
       "udp://1.1.1.2",
       "tcp://1.1.1.1",
+      "tls://1.1.1.1",
+      "tls://1.1.1.2",
       "https://1.1.1.1/dns-query",
       "https://dns.google/dns-query",
       "https://sky.rethinkdns.com/dns-query",
@@ -93,13 +98,16 @@ abstract class ConfigOptions {
 
   static final directDnsAddress = PreferencesNotifier.create<String, String>(
     "direct-dns-address",
-    // Go Bull default: UDP DNS (Yandex 77.88.8.1)
-    "udp://77.88.8.1",
+    // Go Bull default: DNS over TLS (DoT)
+    "tls://77.88.8.1",
     possibleValues: List.of([
       "local",
       // Yandex DNS
       "https://dns.yandex.net/dns-query",
       "https://common.dot.dns.yandex.net/dns-query",
+      "tls://common.dot.dns.yandex.net",
+      "tls://77.88.8.8",
+      "tls://77.88.8.1",
       "udp://77.88.8.8",
       "udp://77.88.8.1",
       "tcp://77.88.8.8",
@@ -108,13 +116,15 @@ abstract class ConfigOptions {
       "udp://1.1.1.1",
       "udp://1.1.1.2",
       "tcp://1.1.1.1",
+      "tls://1.1.1.1",
+      "tls://1.1.1.2",
       "https://1.1.1.1/dns-query",
       "https://dns.google/dns-query",
       "https://sky.rethinkdns.com/dns-query",
       "4.4.2.2",
       "8.8.8.8",
     ]),
-    defaultValueFunction: (_) => "udp://77.88.8.1",
+    defaultValueFunction: (_) => "tls://77.88.8.1",
     validator: (value) => value.isNotBlank,
   );
 

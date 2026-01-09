@@ -48,6 +48,20 @@ class HomePage extends HookConsumerWidget {
         ? "—"
         : DateFormat.yMMMd(locale.toLanguageTag()).format(expire);
 
+    final subActive = switch (activeProfile) {
+      AsyncData(value: RemoteProfileEntity(:final subInfo)) =>
+        subInfo == null ? true : !subInfo.isExpired,
+      _ => null,
+    };
+
+    final subStatusText = subActive == null
+        ? null
+        : (subActive ? "Подписка активна" : "Подписка не активна");
+
+    final subStatusColor = subActive == null
+        ? null
+        : (subActive ? cs.onSurface.withOpacity(0.45) : cs.error.withOpacity(0.85));
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
@@ -86,6 +100,18 @@ class HomePage extends HookConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              if (subStatusText != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subStatusText,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: subStatusColor,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
               if (activeProfile case AsyncError(:final error)) ...[
                 const SizedBox(height: 18),
                 Text(

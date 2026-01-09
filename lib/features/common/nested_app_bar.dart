@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hiddify/bootstrap.dart';
 import 'package:hiddify/core/router/router.dart';
+import 'package:hiddify/core/widget/go_bull_logo.dart';
 import 'package:hiddify/features/common/adaptive_root_scaffold.dart';
 import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/utils/utils.dart';
@@ -53,10 +54,7 @@ class NestedAppBar extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              'assets/images/app_logo.png',
-              fit: BoxFit.cover,
-            ),
+            child: const GoBullLogo(size: 16),
           ),
         ),
         const SizedBox(width: 10),

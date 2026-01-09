@@ -8,6 +8,8 @@ import 'package:hiddify/features/config_option/notifier/config_option_notifier.d
 import 'package:hiddify/features/connection/model/connection_status.dart';
 import 'package:hiddify/features/connection/notifier/connection_notifier.dart';
 import 'package:hiddify/features/profile/notifier/active_profile_notifier.dart';
+import 'package:hiddify/features/profile/model/profile_entity.dart';
+import 'package:hiddify/features/access/notifier/access_gate_provider.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
 import 'package:hiddify/utils/alerts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,6 +21,8 @@ class ConnectionButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
     final connectionStatus = ref.watch(connectionNotifierProvider);
+    final activeProfile = ref.watch(activeProfileProvider);
+    final hasAccess = ref.watch(hasValidGoBullSubscriptionProvider).valueOrNull;
 
     final requiresReconnect = ref.watch(configOptionNotifierProvider).valueOrNull;
 
@@ -43,21 +47,54 @@ class ConnectionButton extends HookConsumerWidget {
       _ => Colors.white.withOpacity(0.65),
     };
 
+    // Gate by the same condition as Access Gate: no valid Go Bull subscription -> block enabling.
+    final isSubscriptionInactive = (hasAccess == false) ||
+        switch (activeProfile) {
+          AsyncData(value: RemoteProfileEntity(:final subInfo)) => subInfo?.isExpired == true,
+          _ => false,
+        };
+
+    // Block ONLY enabling VPN when subscription is inactive (disconnect is always allowed).
+    final blockConnect = isSubscriptionInactive &&
+        connectionStatus is AsyncData<ConnectionStatus> &&
+        connectionStatus.value is Disconnected;
+
+    void showPaywall() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Оплатите подписку и обновите её через меню"),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+
+    final computedOnTap = switch (connectionStatus) {
+      AsyncData(value: Disconnected()) || AsyncError() =>
+        () async => ref.read(connectionNotifierProvider.notifier).toggleConnection(),
+      AsyncData(value: Connected()) => () async {
+          if (requiresReconnect == true) {
+            return await ref
+                .read(connectionNotifierProvider.notifier)
+                .reconnect(await ref.read(activeProfileProvider.future));
+          }
+          return await ref.read(connectionNotifierProvider.notifier).toggleConnection();
+        },
+      _ => () {},
+    };
+
+    final computedEnabled = switch (connectionStatus) {
+      AsyncData(value: Connected()) ||
+      AsyncData(value: Disconnected()) ||
+      AsyncError() =>
+        true,
+      _ => false,
+    };
+
     return _ConnectionButton(
-      onTap: switch (connectionStatus) {
-        AsyncData(value: Disconnected()) || AsyncError() => () async => ref.read(connectionNotifierProvider.notifier).toggleConnection(),
-        AsyncData(value: Connected()) => () async {
-            if (requiresReconnect == true) {
-              return await ref.read(connectionNotifierProvider.notifier).reconnect(await ref.read(activeProfileProvider.future));
-            }
-            return await ref.read(connectionNotifierProvider.notifier).toggleConnection();
-          },
-        _ => () {},
-      },
-      enabled: switch (connectionStatus) {
-        AsyncData(value: Connected()) || AsyncData(value: Disconnected()) || AsyncError() => true,
-        _ => false,
-      },
+      onTap: blockConnect ? showPaywall : computedOnTap,
+      enabled: computedEnabled && !blockConnect,
+      disabledTap: blockConnect ? showPaywall : null,
+      blocked: blockConnect,
       semanticsLabel: switch (connectionStatus) {
         AsyncData(value: Connected()) when requiresReconnect == true => t.connection.reconnect,
         AsyncData(value: final status) => status.present(t),
@@ -72,14 +109,18 @@ class _ConnectionButton extends StatelessWidget {
   const _ConnectionButton({
     required this.onTap,
     required this.enabled,
+    required this.blocked,
     required this.semanticsLabel,
     required this.stateColor,
+    this.disabledTap,
   });
 
   final VoidCallback onTap;
   final bool enabled;
+  final bool blocked;
   final String semanticsLabel;
   final Color stateColor;
+  final VoidCallback? disabledTap;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +174,7 @@ class _ConnectionButton extends StatelessWidget {
           key: const ValueKey("home_connection_button"),
           color: Colors.transparent,
           child: InkWell(
-            onTap: enabled ? onTap : null,
+            onTap: enabled ? onTap : (disabledTap ?? null),
             customBorder: const CircleBorder(),
             splashColor: Colors.white.withOpacity(0.06),
             highlightColor: Colors.white.withOpacity(0.03),
@@ -146,10 +187,10 @@ class _ConnectionButton extends StatelessWidget {
             ),
           ),
         )
-            .animate(target: enabled ? 0 : 1)
+            .animate(target: enabled && !blocked ? 0 : 1)
             .blurXY(end: 0.9)
             .fade(end: 0.85),
-      ).animate(target: enabled ? 0 : 1).scaleXY(end: .98, curve: Curves.easeIn),
+      ).animate(target: enabled && !blocked ? 0 : 1).scaleXY(end: .98, curve: Curves.easeIn),
     );
   }
 }
