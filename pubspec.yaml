@@ -157,10 +157,11 @@ flutter_gen:
 
 flutter_launcher_icons:
   android: true
-  ios: false
+  ios: true
   image_path: assets/images/app_logo.png
   adaptive_icon_background: "#0A0A0A"
   adaptive_icon_foreground: assets/images/app_logo.png
+  remove_alpha_ios: true
 
 flutter_native_splash:
   color: "#ffffff"

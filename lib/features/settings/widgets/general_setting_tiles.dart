@@ -15,6 +15,8 @@ class GeneralSettingTiles extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(translationsProvider);
+    final androidOnlySubtitle =
+        Platform.isAndroid ? null : const Text("Доступно только на Android");
 
     return Column(
       children: [
@@ -27,22 +29,28 @@ class GeneralSettingTiles extends HookConsumerWidget {
           value: ref.watch(Preferences.autoCheckIp),
           onChanged: ref.read(Preferences.autoCheckIp.notifier).update,
         ),
-        if (Platform.isAndroid) ...[
-          SwitchListTile(
-            title: Text(t.settings.general.dynamicNotification),
-            secondary: const Icon(Icons.speed_rounded),
-            value: ref.watch(Preferences.dynamicNotification),
-            onChanged: (value) async {
-              await ref.read(Preferences.dynamicNotification.notifier).update(value);
-            },
-          ),
-          SwitchListTile(
-            title: Text(t.settings.general.hapticFeedback),
-            secondary: const Icon(Icons.vibration_rounded),
-            value: ref.watch(hapticServiceProvider),
-            onChanged: ref.read(hapticServiceProvider.notifier).updatePreference,
-          ),
-        ],
+        SwitchListTile(
+          title: Text(t.settings.general.dynamicNotification),
+          subtitle: androidOnlySubtitle,
+          secondary: const Icon(Icons.speed_rounded),
+          value: ref.watch(Preferences.dynamicNotification),
+          onChanged: Platform.isAndroid
+              ? (value) async {
+                  await ref
+                      .read(Preferences.dynamicNotification.notifier)
+                      .update(value);
+                }
+              : null,
+        ),
+        SwitchListTile(
+          title: Text(t.settings.general.hapticFeedback),
+          subtitle: androidOnlySubtitle,
+          secondary: const Icon(Icons.vibration_rounded),
+          value: ref.watch(hapticServiceProvider),
+          onChanged: Platform.isAndroid
+              ? ref.read(hapticServiceProvider.notifier).updatePreference
+              : null,
+        ),
         if (PlatformUtils.isDesktop) ...[
           const ClosingPrefTile(),
           SwitchListTile(
