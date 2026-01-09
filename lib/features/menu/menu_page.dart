@@ -13,92 +13,50 @@ class MenuPage extends HookConsumerWidget {
     final t = ref.watch(translationsProvider);
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final iosParity = defaultTargetPlatform == TargetPlatform.iOS;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: (iosParity
-              ? Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Меню",
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const Gap(24),
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.1,
-                          children: [
-                            _MenuTile(
-                              icon: Icons.public_rounded,
-                              label: t.proxies.pageTitle,
-                              description: "Выбор сервера",
-                              color: cs.primary,
-                              onTap: () => const ProxiesRoute().push(context),
-                            ),
-                            _MenuTile(
-                              icon: Icons.info_rounded,
-                              label: t.about.pageTitle,
-                              description: "Версия и ссылки",
-                              color: cs.tertiary,
-                              onTap: () => const AboutRoute().push(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Меню",
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const Gap(24),
-                        Expanded(
-                          child: GridView.count(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 1.1,
-                            children: [
-                              _MenuTile(
-                                icon: Icons.public_rounded,
-                                label: t.proxies.pageTitle,
-                                description: "Выбор сервера",
-                                color: cs.primary,
-                                onTap: () =>
-                                    const MenuProxiesRoute().push(context),
-                              ),
-                              _MenuTile(
-                                icon: Icons.info_rounded,
-                                label: t.about.pageTitle,
-                                description: "Версия и ссылки",
-                                color: cs.tertiary,
-                                onTap: () => const MenuAboutRoute().push(context),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Меню",
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const Gap(24),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.1,
+                  children: [
+                    _MenuTile(
+                      icon: Icons.public_rounded,
+                      label: t.proxies.pageTitle,
+                      description: "Выбор сервера",
+                      color: cs.primary,
+                      onTap: () => const MenuProxiesRoute().push(context),
                     ),
-                  ),
-                )),
+                    _MenuTile(
+                      icon: Icons.info_rounded,
+                      label: t.about.pageTitle,
+                      description: "Версия и ссылки",
+                      color: cs.tertiary,
+                      onTap: () => const MenuAboutRoute().push(context),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
